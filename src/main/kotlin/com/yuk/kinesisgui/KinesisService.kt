@@ -2,20 +2,12 @@ package com.yuk.kinesisgui
 
 import com.amazonaws.services.kinesis.AmazonKinesis
 import com.amazonaws.services.kinesis.model.GetRecordsRequest
+import com.amazonaws.services.kinesis.model.GetRecordsResult
 import com.amazonaws.services.kinesis.model.GetShardIteratorRequest
 import com.amazonaws.services.kinesis.model.ListShardsRequest
 import com.amazonaws.services.kinesis.model.PutRecordRequest
-import com.amazonaws.services.kinesis.model.Record
-import org.springframework.shell.standard.ShellComponent
-import org.springframework.shell.standard.ShellMethod
-import org.springframework.shell.standard.ShellOption
 import org.springframework.stereotype.Service
 import java.nio.ByteBuffer
-import java.sql.Timestamp
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.util.*
 
 @Service
 class KinesisService(
@@ -44,12 +36,12 @@ class KinesisService(
     fun getShardIterator(
         streamName: String,
         shardId: String,
-        shardIteratorType: String
+        shardIteratorType: String = "LATEST"
     ): String {
         val shardIteratorRequest = GetShardIteratorRequest()
         shardIteratorRequest.streamName = streamName
         shardIteratorRequest.shardId = shardId
-        shardIteratorRequest.shardIteratorType = "LATEST"
+        shardIteratorRequest.shardIteratorType = shardIteratorType
 
         val shardIteratorResult =
             kinesisClient.getShardIterator(shardIteratorRequest)
@@ -60,13 +52,12 @@ class KinesisService(
     fun getRecords(
         shardIterator: String,
         limit: Int
-    ): List<String> {
+    ): GetRecordsResult {
         val getRecordsRequest = GetRecordsRequest()
         getRecordsRequest.shardIterator = shardIterator
         getRecordsRequest.limit = limit
 
-        val getRecordsResult = kinesisClient.getRecords(getRecordsRequest)
-        return getRecordsResult.records.map { it.data.array().toString(Charsets.UTF_8) }
+        return kinesisClient.getRecords(getRecordsRequest)
     }
 
     fun addRecord(

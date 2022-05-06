@@ -4,7 +4,6 @@ import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption
 
-
 @ShellComponent
 class ShellService(
     private val kinesisService: KinesisService,
@@ -39,7 +38,9 @@ class ShellService(
         @ShellOption shardIterator: String,
         @ShellOption(defaultValue = "25") limit: Int
     ): List<String> {
-        return kinesisService.getRecords(shardIterator, limit)
+        val result = kinesisService.getRecords(shardIterator, limit)
+
+        return result.records.map { it.data.toString() }
     }
 
     @ShellMethod(value = "레코드 입력", key = ["add"])
@@ -48,5 +49,12 @@ class ShellService(
         @ShellOption data: String,
     ): String {
         return kinesisService.addRecord(streamName, data)
+    }
+
+    @ShellMethod(value = "스트림 추적", key = ["track"])
+    fun trackStream(
+        @ShellOption streamName: String,
+    ) {
+        streamTrackerManager.startTracking(streamName)
     }
 }

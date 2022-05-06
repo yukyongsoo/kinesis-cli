@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.5.7"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
     kotlin("jvm") version "1.6.20"
     kotlin("plugin.spring") version "1.6.20"
 }
@@ -20,6 +21,7 @@ extra["springCloudVersion"] = "2021.0.2"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.shell:spring-shell-starter:2.0.1.RELEASE")
