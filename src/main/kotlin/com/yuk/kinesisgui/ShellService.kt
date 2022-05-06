@@ -61,7 +61,7 @@ class ShellService(
     @ShellMethod(value = "스트림 추적 중지", key = ["untrack"])
     fun untrackStream(
         @ShellOption streamName: String
-    ){
+    ) {
         streamTrackerManager.stopTracking(streamName)
     }
 }
