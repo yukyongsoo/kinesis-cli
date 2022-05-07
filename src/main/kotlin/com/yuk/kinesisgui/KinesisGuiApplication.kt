@@ -7,6 +7,6 @@ import org.springframework.boot.runApplication
 class KinesisGuiApplication
 
 fun main(args: Array<String>) {
-    System.setProperty("spring.profiles.active", "cli")
     runApplication<KinesisGuiApplication>(*args)
 }
+

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Service
 
 @Service
-@Scope("prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 class StreamTracker(
     private val kinesisService: KinesisService,
     private val recordProcessor: RecordProcessor
