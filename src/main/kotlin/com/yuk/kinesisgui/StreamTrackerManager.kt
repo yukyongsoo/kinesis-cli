@@ -18,6 +18,9 @@ class StreamTrackerManager(
     }
 
     fun stopTracking(streamName: String) {
-        streamTrackerMap.remove(streamName)?.stop()
+        val streamTracker = streamTrackerMap.remove(streamName)
+            ?: throw IllegalStateException("Stream $streamName is not tracked")
+
+        streamTracker.stop()
     }
 }
