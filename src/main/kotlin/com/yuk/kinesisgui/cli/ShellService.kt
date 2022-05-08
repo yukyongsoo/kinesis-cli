@@ -1,5 +1,7 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.cli
 
+import com.yuk.kinesisgui.KinesisService
+import com.yuk.kinesisgui.StreamTrackerManager
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption

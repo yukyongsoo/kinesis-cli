@@ -9,4 +9,3 @@ class KinesisGuiApplication
 fun main(args: Array<String>) {
     runApplication<KinesisGuiApplication>(*args)
 }
-

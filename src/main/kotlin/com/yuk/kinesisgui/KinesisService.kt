@@ -14,7 +14,7 @@ class KinesisService(
     private val kinesisClient: AmazonKinesis
 ) {
     fun getStreamList(
-        word: String
+        word: String = ""
     ): List<String> {
         val list = kinesisClient.listStreams()
 

@@ -18,7 +18,7 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2021.0.2"
-extra["vaadinVersion"] = "23.0.7"
+extra["vaadinVersion"] = "22.0.14"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -26,6 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     implementation("com.vaadin:vaadin-spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-devtools")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
