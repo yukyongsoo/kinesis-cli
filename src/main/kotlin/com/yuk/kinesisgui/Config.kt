@@ -17,9 +17,9 @@ import org.springframework.shell.jline.PromptProvider
 
 @Configuration(proxyBeanMethods = false)
 @Push(PushMode.AUTOMATIC)
-class Config: AppShellConfigurator {
+class Config : AppShellConfigurator {
     companion object {
-        val objectMapper =  JsonMapper.builder()
+        val objectMapper = JsonMapper.builder()
             .addModule(KotlinModule())
             .findAndAddModules()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

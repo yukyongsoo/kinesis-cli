@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.springframework.stereotype.Service
 
 class StreamTracker(
     private val kinesisService: KinesisService
@@ -52,10 +51,9 @@ class StreamTracker(
                 shardTracker.stop()
             }
             true
-        }
-        else {
+        } else {
             shardTrackerMap.forEach {
-                    (_, shardTracker) ->
+                (_, shardTracker) ->
                 shardTracker.setRecordProcessors(recordProcessors)
             }
             false

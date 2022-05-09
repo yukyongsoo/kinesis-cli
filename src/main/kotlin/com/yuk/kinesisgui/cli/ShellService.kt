@@ -58,7 +58,7 @@ class ShellService(
     fun trackStream(
         @ShellOption streamName: String,
     ) {
-        if(streamTrackerManager.isTracked(streamName).not()) {
+        if (streamTrackerManager.isTracked(streamName).not()) {
             streamTrackerManager.startTracking(streamName)
         }
 
