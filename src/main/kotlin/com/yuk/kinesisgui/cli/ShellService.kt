@@ -2,6 +2,7 @@ package com.yuk.kinesisgui.cli
 
 import com.yuk.kinesisgui.KinesisService
 import com.yuk.kinesisgui.StreamTrackerManager
+import com.yuk.kinesisgui.processor.ConsoleRecordProcessor
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption
@@ -57,7 +58,11 @@ class ShellService(
     fun trackStream(
         @ShellOption streamName: String,
     ) {
-        streamTrackerManager.startTracking(streamName)
+        if(streamTrackerManager.isTracked(streamName).not()) {
+            streamTrackerManager.startTracking(streamName)
+        }
+
+        streamTrackerManager.addRecordProcessor(streamName, ConsoleRecordProcessor())
     }
 
     @ShellMethod(value = "스트림 추적 중지", key = ["untrack"])

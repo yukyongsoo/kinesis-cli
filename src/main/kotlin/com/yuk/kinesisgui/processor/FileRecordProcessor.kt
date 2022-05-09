@@ -1,9 +1,7 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.processor
 
-import org.springframework.stereotype.Service
 import java.io.FileWriter
 
-@Service
 class FileRecordProcessor : RecordProcessor {
     @Synchronized
     override fun processRecord(data: String) {

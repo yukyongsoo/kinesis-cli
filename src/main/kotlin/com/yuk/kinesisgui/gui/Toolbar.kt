@@ -6,17 +6,21 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.value.ValueChangeMode
 
 class Toolbar : HorizontalLayout() {
-    var filterText = TextField()
+    var recordText = TextField()
 
     init {
         addClassName("toolbar")
 
-        filterText.placeholder = "Filter by EventData..."
-        filterText.isClearButtonVisible = true
-        filterText.valueChangeMode = ValueChangeMode.LAZY
+        recordText.placeholder = "add Stream Data"
+        recordText.isClearButtonVisible = true
+        recordText.valueChangeMode = ValueChangeMode.LAZY
+        recordText.width = "900px"
 
-        val addContactButton = Button("Search")
+        val button = Button("Add Record")
+        button.addClickListener {
+            GuiController.addRecord(recordText.value)
+        }
 
-        add(filterText, addContactButton)
+        add(recordText, button)
     }
 }
