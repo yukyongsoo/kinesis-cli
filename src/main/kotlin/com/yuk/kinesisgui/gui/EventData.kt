@@ -1,8 +1,15 @@
 package com.yuk.kinesisgui.gui
 
-data class EventData(
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+
+class EventData(
     val eventTime: String,
     val eventType: String,
     val source: String,
-    val data: Map<String, Any?>
-)
+    @JsonProperty("data")
+    data: Map<String, Any?>
+) {
+    @JsonIgnore
+    val data = data.toString()
+}

@@ -2,60 +2,61 @@ package com.yuk.kinesisgui.gui
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Label
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.Consumer
+import kotlin.math.min
 
 class EventGrid(clazz: Class<EventData>) : Grid<EventData>(clazz, false) {
-    private val items = mutableListOf<EventData>()
-    private val eventGridSearchFilter: EventGridSearchFilter
+    private val items = ConcurrentLinkedQueue<EventData>()
+    private val eventGridSearchFilter = EventGridSearchFilter()
 
     init {
         addClassNames("contact-grid")
         setSizeFull()
 
-        val dataView = setItems(items)
-        eventGridSearchFilter = EventGridSearchFilter(dataView)
-        setHeader()
+        val timeColumn = addColumn(EventData::eventTime).setAutoWidth(true)
+        val typeColumn = addColumn(EventData::eventType).setAutoWidth(true)
+        val sourceColumn = addColumn(EventData::source).setAutoWidth(true)
+        val dataColumn = addColumn(EventData::data).setAutoWidth(true)
+
+        addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT)
+
+        setHeader(timeColumn, typeColumn, sourceColumn, dataColumn)
     }
 
-    private fun setHeader() {
-        val timeColumn: Column<EventData> = addColumn(EventData::eventTime)
-        val typeColumn: Column<EventData> = addColumn(EventData::eventType)
-        val sourceColumn: Column<EventData> = addColumn(EventData::source)
-        val dataColumn: Column<EventData> = addColumn(EventData::data)
-
+    private fun setHeader(
+        timeColumn: Column<EventData>,
+        typeColumn: Column<EventData>,
+        sourceColumn: Column<EventData>,
+        dataColumn: Column<EventData>
+    ) {
         headerRows.clear()
         val headerRow = appendHeaderRow()
 
         headerRow.getCell(timeColumn).setComponent(
-            createFilterHeader("Time") {
-                eventGridSearchFilter.eventTime
-            }
+            createFilterHeader("Time", filterChangeConsumer =  eventGridSearchFilter::eventTime::set)
         )
         headerRow.getCell(typeColumn)
             .setComponent(
-                createFilterHeader("EventType") {
-                    eventGridSearchFilter.eventType
-                }
+                createFilterHeader("EventType", filterChangeConsumer = eventGridSearchFilter::eventType::set)
             )
         headerRow.getCell(sourceColumn).setComponent(
-            createFilterHeader("Source") {
-                eventGridSearchFilter.source
-            }
+            createFilterHeader("Source", filterChangeConsumer = eventGridSearchFilter::source::set)
         )
         headerRow.getCell(dataColumn).setComponent(
-            createFilterHeader("Data") {
-                eventGridSearchFilter.data
-            }
+            createFilterHeader("Data", "500px", eventGridSearchFilter::data::set)
         )
     }
 
     private fun createFilterHeader(
         labelText: String,
+        minWidth: String = "",
         filterChangeConsumer: Consumer<String>
     ): Component {
         val label = Label(labelText).apply {
@@ -68,10 +69,13 @@ class EventGrid(clazz: Class<EventData>) : Grid<EventData>(clazz, false) {
             isClearButtonVisible = true
             addThemeVariants(TextFieldVariant.LUMO_SMALL)
             setWidthFull()
-            style["max-width"] =  "100%"
+            if (minWidth.isNotBlank())
+                this.minWidth = minWidth
+            style["max-width"] = "100%"
         }
         textField.addValueChangeListener { e ->
             filterChangeConsumer.accept(e.value)
+            refreshUI{}
         }
 
         val layout = VerticalLayout(label, textField).apply {
@@ -94,11 +98,15 @@ class EventGrid(clazz: Class<EventData>) : Grid<EventData>(clazz, false) {
         this.items.clear()
     }
 
+    fun currentItems() = items.filter(eventGridSearchFilter::filter)
+
     private fun refreshUI(block: () -> Unit) {
+        block()
+        val filteredItems = items.filter(eventGridSearchFilter::filter)
+
         ui.ifPresent {
             it.access {
-                block()
-                setItems(items)
+                setItems(filteredItems)
                 it.push()
             }
         }

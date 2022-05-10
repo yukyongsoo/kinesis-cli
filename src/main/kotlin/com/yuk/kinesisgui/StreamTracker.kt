@@ -13,9 +13,9 @@ class StreamTracker(
     private val shardTrackerMap = mutableMapOf<String, ShardTracker>()
     private val recordProcessors = mutableListOf<RecordProcessor>()
 
-    fun start(streamName: String) {
+    fun start(streamName: String, trimHorizon: Boolean) {
         this.streamName = streamName
-        setShardTracker()
+        setShardTracker(trimHorizon)
     }
 
     fun stop() {
@@ -24,10 +24,15 @@ class StreamTracker(
         }
     }
 
-    private fun setShardTracker() {
+    private fun setShardTracker(trimHorizon: Boolean) {
         val ids = kinesisService.getShardIds(streamName)
+
+        val shardIteratorType =
+            if (trimHorizon) "TRIM_HORIZON"
+            else "LATEST"
+
         ids.map { id ->
-            val iter = kinesisService.getShardIterator(streamName, id)
+            val iter = kinesisService.getShardIterator(streamName, id, shardIteratorType)
             val tracker = ShardTracker(kinesisService, iter)
 
             shardTrackerMap[id] = tracker

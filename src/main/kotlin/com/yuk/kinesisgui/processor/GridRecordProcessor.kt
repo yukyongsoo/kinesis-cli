@@ -9,10 +9,8 @@ class GridRecordProcessor(
     private val eventGrid: EventGrid
 ) : RecordProcessor {
     override fun processRecord(data: String) {
-        val list = data.split("\n").mapNotNull { json ->
-            return@mapNotNull kotlin.runCatching {
-                Config.objectMapper.readValue<EventData>(json)
-            }.onSuccess { it }.getOrNull()
+        val list = data.split("\n").filter { it.isNotBlank() }.map {
+            Config.objectMapper.readValue<EventData>(it)
         }
 
         eventGrid.addItems(list.sortedBy { it.eventTime })

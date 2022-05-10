@@ -15,6 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://maven.vaadin.com/vaadin-addons") }
 }
 
 extra["springCloudVersion"] = "2021.0.2"
@@ -26,10 +27,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     implementation("com.vaadin:vaadin-spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-devtools")
+    implementation("org.vaadin.olli:file-download-wrapper:4.0.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")
 
+    implementation("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.shell:spring-shell-starter:2.0.1.RELEASE")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -9,14 +9,14 @@ class StreamTrackerManager(
 ) {
     private val streamTrackerMap = mutableMapOf<String, StreamTracker>()
 
-    fun startTracking(streamName: String) {
+    fun startTracking(streamName: String, trimHorizon: Boolean = false) {
         if (streamTrackerMap.containsKey(streamName)) {
             throw IllegalStateException("Stream $streamName is already tracked")
         }
 
         val streamTracker = StreamTracker(kinesisService)
 
-        streamTracker.start(streamName)
+        streamTracker.start(streamName, trimHorizon)
         streamTrackerMap[streamName] = streamTracker
     }
 
