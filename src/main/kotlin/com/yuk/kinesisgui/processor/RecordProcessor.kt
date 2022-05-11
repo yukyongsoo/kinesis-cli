@@ -1,11 +1,13 @@
 package com.yuk.kinesisgui.processor
 
-interface RecordProcessor {
-    fun processRecord(data: String)
+import com.yuk.kinesisgui.RecordData
 
-    fun process(data: String) {
+interface RecordProcessor {
+    fun processRecord(records: List<RecordData>)
+
+    fun process(records: List<RecordData>) {
         try {
-            processRecord(data)
+            processRecord(records)
         } catch (e: Exception) {
             e.printStackTrace()
         }

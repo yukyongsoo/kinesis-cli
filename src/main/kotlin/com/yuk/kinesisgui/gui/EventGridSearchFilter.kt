@@ -1,20 +1,25 @@
 package com.yuk.kinesisgui.gui
 
+import com.yuk.kinesisgui.RecordData
 import java.util.Locale
 
 class EventGridSearchFilter {
+    var seq = ""
+    var recordTime = ""
     var eventTime = ""
     var eventType = ""
     var source = ""
     var data = ""
 
-    fun filter(searchData: EventData): Boolean {
+    fun filter(searchData: RecordData): Boolean {
+        val matchSeq = matches(searchData.seq, seq)
+        val matchRecordTime = matches(searchData.recordTime, recordTime)
         val matchTime = matches(searchData.eventTime, eventTime)
         val matchType = matches(searchData.eventType, eventType)
         val matchSource = matches(searchData.source, source)
         val matchData = multiMatches(searchData.data, data)
 
-        return matchTime && matchType && matchSource && matchData
+        return matchRecordTime && matchTime && matchType && matchSource && matchData && matchSeq
     }
 
     private fun matches(value: String, searchTerm: String): Boolean {

@@ -5,6 +5,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.sql.Timestamp
+import java.time.LocalDateTime
 
 class StreamTracker(
     private val kinesisService: KinesisService
@@ -13,9 +15,13 @@ class StreamTracker(
     private val shardTrackerMap = mutableMapOf<String, ShardTracker>()
     private val recordProcessors = mutableListOf<RecordProcessor>()
 
-    fun start(streamName: String, trimHorizon: Boolean) {
+    fun start(
+        streamName: String,
+        trimHorizon: Boolean,
+        afterTime: LocalDateTime?
+    ) {
         this.streamName = streamName
-        setShardTracker(trimHorizon)
+        setShardTracker(trimHorizon, afterTime)
     }
 
     fun stop() {
@@ -24,15 +30,19 @@ class StreamTracker(
         }
     }
 
-    private fun setShardTracker(trimHorizon: Boolean) {
+    private fun setShardTracker(trimHorizon: Boolean, afterTime: LocalDateTime?) {
         val ids = kinesisService.getShardIds(streamName)
 
-        val shardIteratorType =
-            if (trimHorizon) "TRIM_HORIZON"
-            else "LATEST"
+        val shardIteratorType = when {
+            trimHorizon -> "TRIM_HORIZON"
+            afterTime != null -> "AT_TIMESTAMP"
+            else -> "LATEST"
+        }
+
+        val searchDate = Timestamp.valueOf(afterTime ?: LocalDateTime.now())
 
         ids.map { id ->
-            val iter = kinesisService.getShardIterator(streamName, id, shardIteratorType)
+            val iter = kinesisService.getShardIterator(streamName, id, shardIteratorType, searchDate)
             val tracker = ShardTracker(kinesisService, iter)
 
             shardTrackerMap[id] = tracker
@@ -90,13 +100,34 @@ class StreamTracker(
         private fun getRecords() {
             CoroutineScope(Dispatchers.IO).launch {
                 while (isRunning) {
-                    val result = kinesisService.getRecords(iterator, 100)
+                    val result = kinesisService.getRecords(iterator, 1000)
 
-                    result.records.map { String(it.data.array()) }.forEach { record ->
-                        recordProcessors.forEach { it.process(record) }
+                    val records = result.records.flatMap { record ->
+                        try {
+                            Config.objectMapper.readerFor(RecordData::class.java).readValues<RecordData>(record.data.array())
+                                .asSequence()
+                                .map {
+                                    it.seq = record.sequenceNumber
+                                    it.recordTime = record.approximateArrivalTimestamp.toString()
+                                    it
+                                }
+                                .toList()
+                        }
+                        catch (e: Exception) {
+                            println("seq: ${record.sequenceNumber} message: ${e.message}")
+                            return@flatMap emptyList()
+                        }
                     }
 
-                    iterator = result.nextShardIterator
+                    recordProcessors.forEach {
+                        it.process(records)
+                    }
+
+                    if (result.nextShardIterator == null) {
+                        isRunning = false
+                    } else {
+                        iterator = result.nextShardIterator
+                    }
 
                     delay(1000)
                 }

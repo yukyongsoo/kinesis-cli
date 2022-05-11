@@ -2,6 +2,7 @@ package com.yuk.kinesisgui
 
 import com.yuk.kinesisgui.processor.RecordProcessor
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class StreamTrackerManager(
@@ -9,14 +10,14 @@ class StreamTrackerManager(
 ) {
     private val streamTrackerMap = mutableMapOf<String, StreamTracker>()
 
-    fun startTracking(streamName: String, trimHorizon: Boolean = false) {
+    fun startTracking(streamName: String, trimHorizon: Boolean = false, afterTime: LocalDateTime? = null) {
         if (streamTrackerMap.containsKey(streamName)) {
             throw IllegalStateException("Stream $streamName is already tracked")
         }
 
         val streamTracker = StreamTracker(kinesisService)
 
-        streamTracker.start(streamName, trimHorizon)
+        streamTracker.start(streamName, trimHorizon, afterTime)
         streamTrackerMap[streamName] = streamTracker
     }
 

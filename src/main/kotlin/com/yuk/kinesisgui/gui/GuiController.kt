@@ -4,6 +4,7 @@ import com.yuk.kinesisgui.ExcelUtil
 import com.yuk.kinesisgui.KinesisService
 import com.yuk.kinesisgui.StreamTrackerManager
 import com.yuk.kinesisgui.processor.GridRecordProcessor
+import java.time.LocalDateTime
 
 object GuiController {
     private lateinit var kinesisService: KinesisService
@@ -50,6 +51,16 @@ object GuiController {
             streamTrackerManager.stopTracking(currentStreamName)
 
         streamTrackerManager.startTracking(currentStreamName, trimHorizon)
+        streamTrackerManager.addRecordProcessor(currentStreamName, gridRecordProcessor)
+    }
+
+    fun afterTime(afterTime: LocalDateTime) {
+        grid.clean()
+
+        if (streamTrackerManager.isTracked(currentStreamName))
+            streamTrackerManager.stopTracking(currentStreamName)
+
+        streamTrackerManager.startTracking(currentStreamName, afterTime = afterTime)
         streamTrackerManager.addRecordProcessor(currentStreamName, gridRecordProcessor)
     }
 

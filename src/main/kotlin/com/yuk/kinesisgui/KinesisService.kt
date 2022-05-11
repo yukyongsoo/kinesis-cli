@@ -8,6 +8,7 @@ import com.amazonaws.services.kinesis.model.ListShardsRequest
 import com.amazonaws.services.kinesis.model.PutRecordRequest
 import org.springframework.stereotype.Service
 import java.nio.ByteBuffer
+import java.util.Date
 
 @Service
 class KinesisService(
@@ -36,12 +37,17 @@ class KinesisService(
     fun getShardIterator(
         streamName: String,
         shardId: String,
-        shardIteratorType: String = "LATEST"
+        shardIteratorType: String = "LATEST",
+        startDate: Date = Date()
     ): String {
         val shardIteratorRequest = GetShardIteratorRequest()
         shardIteratorRequest.streamName = streamName
         shardIteratorRequest.shardId = shardId
         shardIteratorRequest.shardIteratorType = shardIteratorType
+
+        if (shardIteratorType == "AT_TIMESTAMP") {
+            shardIteratorRequest.timestamp = startDate
+        }
 
         val shardIteratorResult =
             kinesisClient.getShardIterator(shardIteratorRequest)

@@ -8,39 +8,50 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
-import java.util.concurrent.ConcurrentLinkedQueue
+import com.yuk.kinesisgui.RecordData
+import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.function.Consumer
-import kotlin.math.min
 
-class EventGrid(clazz: Class<EventData>) : Grid<EventData>(clazz, false) {
-    private val items = ConcurrentLinkedQueue<EventData>()
+class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
+    private val items = ConcurrentLinkedDeque<RecordData>()
+    private val maxSize = 30000
     private val eventGridSearchFilter = EventGridSearchFilter()
 
     init {
         addClassNames("contact-grid")
         setSizeFull()
 
-        val timeColumn = addColumn(EventData::eventTime).setAutoWidth(true)
-        val typeColumn = addColumn(EventData::eventType).setAutoWidth(true)
-        val sourceColumn = addColumn(EventData::source).setAutoWidth(true)
-        val dataColumn = addColumn(EventData::data).setAutoWidth(true)
+        val recordTimeColumn = addColumn(RecordData::recordTime).setAutoWidth(true)
+        val timeColumn = addColumn(RecordData::eventTime).setAutoWidth(true)
+        val seqColumn = addColumn(RecordData::seq).setAutoWidth(true)
+        val typeColumn = addColumn(RecordData::eventType).setAutoWidth(true)
+        val sourceColumn = addColumn(RecordData::source).setAutoWidth(true)
+        val dataColumn = addColumn(RecordData::data).setAutoWidth(true)
 
         addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT)
 
-        setHeader(timeColumn, typeColumn, sourceColumn, dataColumn)
+        setHeader(recordTimeColumn, timeColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
     }
 
     private fun setHeader(
-        timeColumn: Column<EventData>,
-        typeColumn: Column<EventData>,
-        sourceColumn: Column<EventData>,
-        dataColumn: Column<EventData>
+        recordColumn: Column<RecordData>,
+        timeColumn: Column<RecordData>,
+        seqColumn: Column<RecordData>,
+        typeColumn: Column<RecordData>,
+        sourceColumn: Column<RecordData>,
+        dataColumn: Column<RecordData>
     ) {
         headerRows.clear()
         val headerRow = appendHeaderRow()
 
+        headerRow.getCell(recordColumn).setComponent(
+            createFilterHeader("RecordTime", filterChangeConsumer = eventGridSearchFilter::recordTime::set)
+        )
         headerRow.getCell(timeColumn).setComponent(
-            createFilterHeader("Time", filterChangeConsumer =  eventGridSearchFilter::eventTime::set)
+            createFilterHeader("Time", filterChangeConsumer = eventGridSearchFilter::eventTime::set)
+        )
+        headerRow.getCell(seqColumn).setComponent(
+            createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set)
         )
         headerRow.getCell(typeColumn)
             .setComponent(
@@ -75,7 +86,7 @@ class EventGrid(clazz: Class<EventData>) : Grid<EventData>(clazz, false) {
         }
         textField.addValueChangeListener { e ->
             filterChangeConsumer.accept(e.value)
-            refreshUI{}
+            refreshUI {}
         }
 
         val layout = VerticalLayout(label, textField).apply {
@@ -86,19 +97,26 @@ class EventGrid(clazz: Class<EventData>) : Grid<EventData>(clazz, false) {
         return layout
     }
 
-    fun addItem(item: EventData) = refreshUI {
+    fun addItem(item: RecordData) = refreshUI {
         items.add(item)
+        dropMaxItems()
     }
 
-    fun addItems(items: Collection<EventData>) = refreshUI {
+    fun addItems(items: Collection<RecordData>) = refreshUI {
         this.items.addAll(items)
+        dropMaxItems()
     }
 
     fun clean() = refreshUI {
         this.items.clear()
     }
-
     fun currentItems() = items.filter(eventGridSearchFilter::filter)
+
+    private fun dropMaxItems() = refreshUI {
+        while (items.size > maxSize) {
+            items.poll()
+        }
+    }
 
     private fun refreshUI(block: () -> Unit) {
         block()

@@ -1,9 +1,9 @@
-package com.yuk.kinesisgui.gui
+package com.yuk.kinesisgui
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class EventData(
+class RecordData(
     val eventTime: String,
     val eventType: String,
     val source: String,
@@ -12,4 +12,8 @@ class EventData(
 ) {
     @JsonIgnore
     val data = data.toString()
+    @JsonIgnore
+    lateinit var recordTime: String
+    @JsonIgnore
+    lateinit var seq: String
 }

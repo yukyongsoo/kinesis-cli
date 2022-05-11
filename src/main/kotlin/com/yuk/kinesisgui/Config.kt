@@ -1,7 +1,7 @@
 package com.yuk.kinesisgui
 
 import com.amazonaws.services.kinesis.AmazonKinesis
-import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder
+import com.amazonaws.services.kinesis.AmazonKinesisAsyncClientBuilder
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.json.JsonMapper
@@ -30,10 +30,10 @@ class Config : AppShellConfigurator {
 
     @Bean
     fun getKinesisOperator(): AmazonKinesis {
-        val clientBuilder = AmazonKinesisClientBuilder.standard()
-        clientBuilder.region = region
+        val builder = AmazonKinesisAsyncClientBuilder.standard()
+        builder.region = region
 
-        return clientBuilder.build()
+        return builder.build()
     }
 
     @Bean
