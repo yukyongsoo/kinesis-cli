@@ -4,6 +4,8 @@ import com.yuk.kinesisgui.RecordData
 import java.util.Locale
 
 class EventGridSearchFilter {
+    var shardId = ""
+    var partitionKey = ""
     var seq = ""
     var recordTime = ""
     var eventTime = ""
@@ -12,6 +14,8 @@ class EventGridSearchFilter {
     var data = ""
 
     fun filter(searchData: RecordData): Boolean {
+        val matchShardId = matches(searchData.shardId, shardId)
+        val matchPartitionKey = matches(searchData.partitionKey, partitionKey)
         val matchSeq = matches(searchData.seq, seq)
         val matchRecordTime = matches(searchData.recordTime, recordTime)
         val matchTime = matches(searchData.eventTime, eventTime)
@@ -19,7 +23,7 @@ class EventGridSearchFilter {
         val matchSource = matches(searchData.source, source)
         val matchData = multiMatches(searchData.data, data)
 
-        return matchRecordTime && matchTime && matchType && matchSource && matchData && matchSeq
+        return matchRecordTime && matchTime && matchType && matchSource && matchData && matchSeq && matchShardId && matchPartitionKey
     }
 
     private fun matches(value: String, searchTerm: String): Boolean {

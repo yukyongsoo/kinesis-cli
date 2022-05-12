@@ -1,5 +1,6 @@
 package com.yuk.kinesisgui
 
+import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.yuk.kinesisgui.processor.RecordProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,7 @@ class StreamTracker(
 
         ids.map { id ->
             val iter = kinesisService.getShardIterator(streamName, id, shardIteratorType, searchDate)
-            val tracker = ShardTracker(kinesisService, iter)
+            val tracker = ShardTracker(kinesisService, iter, id)
 
             shardTrackerMap[id] = tracker
             tracker.start()
@@ -77,7 +78,8 @@ class StreamTracker(
 
     class ShardTracker(
         private val kinesisService: KinesisService,
-        private var iterator: String
+        private var iterator: String,
+        private var shardId: String
     ) {
         private var isRunning = false
         private var recordProcessors = mutableListOf<RecordProcessor>()
@@ -101,21 +103,23 @@ class StreamTracker(
             CoroutineScope(Dispatchers.IO).launch {
                 while (isRunning) {
                     val result = kinesisService.getRecords(iterator, 1000)
+                    val deaggregationRecords = UserRecord.deaggregate(result.records)
 
-                    val records = result.records.flatMap { record ->
+                    val records: Set<RecordData> = deaggregationRecords.flatMapTo(mutableSetOf()) { record ->
                         try {
                             Config.objectMapper.readerFor(RecordData::class.java).readValues<RecordData>(record.data.array())
                                 .asSequence()
                                 .map {
-                                    it.seq = record.sequenceNumber
+                                    it.seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
                                     it.recordTime = record.approximateArrivalTimestamp.toString()
+                                    it.shardId = shardId
+                                    it.partitionKey = record.partitionKey
                                     it
                                 }
-                                .toList()
-                        }
-                        catch (e: Exception) {
+                                .toSet()
+                        } catch (e: Exception) {
                             println("seq: ${record.sequenceNumber} message: ${e.message}")
-                            return@flatMap emptyList()
+                            return@flatMapTo emptySet()
                         }
                     }
 

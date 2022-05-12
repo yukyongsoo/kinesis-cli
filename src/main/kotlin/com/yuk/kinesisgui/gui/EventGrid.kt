@@ -9,11 +9,11 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
 import com.yuk.kinesisgui.RecordData
-import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.ConcurrentSkipListSet
 import java.util.function.Consumer
 
 class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
-    private val items = ConcurrentLinkedDeque<RecordData>()
+    private val items = ConcurrentSkipListSet<RecordData>()
     private val maxSize = 30000
     private val eventGridSearchFilter = EventGridSearchFilter()
 
@@ -23,19 +23,24 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
 
         val recordTimeColumn = addColumn(RecordData::recordTime).setAutoWidth(true)
         val timeColumn = addColumn(RecordData::eventTime).setAutoWidth(true)
-        val seqColumn = addColumn(RecordData::seq).setAutoWidth(true)
+        val shardIdColumn = addColumn(RecordData::shardId).setAutoWidth(true)
+        // val partitionKeyColumn = addColumn(RecordData::partitionKey).setAutoWidth(true)
+        val seqColumn = addColumn(RecordData::seq) // .setAutoWidth(true)
+        seqColumn.width = "700px"
         val typeColumn = addColumn(RecordData::eventType).setAutoWidth(true)
         val sourceColumn = addColumn(RecordData::source).setAutoWidth(true)
         val dataColumn = addColumn(RecordData::data).setAutoWidth(true)
 
         addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT)
 
-        setHeader(recordTimeColumn, timeColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
+        setHeader(recordTimeColumn, timeColumn, shardIdColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
     }
 
     private fun setHeader(
         recordColumn: Column<RecordData>,
         timeColumn: Column<RecordData>,
+        shardIdColumn: Column<RecordData>,
+        // partitionKeyColumn: Column<RecordData>,
         seqColumn: Column<RecordData>,
         typeColumn: Column<RecordData>,
         sourceColumn: Column<RecordData>,
@@ -50,6 +55,12 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         headerRow.getCell(timeColumn).setComponent(
             createFilterHeader("Time", filterChangeConsumer = eventGridSearchFilter::eventTime::set)
         )
+        headerRow.getCell(shardIdColumn).setComponent(
+            createFilterHeader("shardId", filterChangeConsumer = eventGridSearchFilter::shardId::set)
+        )
+//        headerRow.getCell(partitionKeyColumn).setComponent(
+//            createFilterHeader("partitionKey", filterChangeConsumer = eventGridSearchFilter::partitionKey::set)
+//        )
         headerRow.getCell(seqColumn).setComponent(
             createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set)
         )
@@ -114,7 +125,7 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
 
     private fun dropMaxItems() = refreshUI {
         while (items.size > maxSize) {
-            items.poll()
+            items.remove(items.first())
         }
     }
 

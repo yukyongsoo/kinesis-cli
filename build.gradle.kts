@@ -39,6 +39,7 @@ dependencies {
 
     implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.213"))
     implementation("com.amazonaws:aws-java-sdk-kinesis")
+    implementation("com.amazonaws:amazon-kinesis-client:1.14.8")
 }
 
 dependencyManagement {

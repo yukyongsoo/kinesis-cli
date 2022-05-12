@@ -5,7 +5,7 @@ import java.io.FileWriter
 
 class FileRecordProcessor : RecordProcessor {
     @Synchronized
-    override fun processRecord(records: List<RecordData>) {
+    override fun processRecord(records: Collection<RecordData>) {
         FileWriter("kinesis.txt", true).use { writer ->
             records.forEach {
                 writer.write("${it.data}\n")
