@@ -4,7 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.5.7"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    id("com.vaadin") version "0.14.6.0"
+    id("com.vaadin") version "23.1.2"
     kotlin("jvm") version "1.6.20"
     kotlin("plugin.spring") version "1.6.20"
 }
@@ -19,7 +19,7 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2021.0.2"
-extra["vaadinVersion"] = "22.0.14"
+extra["vaadinVersion"] = "23.1.2"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
