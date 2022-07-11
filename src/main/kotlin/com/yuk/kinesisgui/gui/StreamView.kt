@@ -7,13 +7,17 @@ class StreamView : Tabs() {
     init {
         orientation = Orientation.VERTICAL
 
-        val list = GuiController.getStreamList()
+        val list = EventGuiController.getStreamList()
         list.sorted().forEach {
             add(Tab(it))
         }
 
+        CurrentState.streamName = list.first()
+
         addSelectedChangeListener { event ->
-            GuiController.selectedStream(event.selectedTab.label)
+            CurrentState.streamName = event.selectedTab.label
+            EventGuiController.selectedStream(event.selectedTab.label)
+            MonitorGuiController.selectedStream(event.selectedTab.label)
         }
     }
 }

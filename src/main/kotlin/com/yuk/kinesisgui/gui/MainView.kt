@@ -1,31 +1,46 @@
 package com.yuk.kinesisgui.gui
 
-import com.vaadin.flow.component.applayout.AppLayout
-import com.vaadin.flow.component.applayout.DrawerToggle
-import com.vaadin.flow.component.html.H1
-import com.vaadin.flow.router.PageTitle
-import com.vaadin.flow.router.Route
-import com.yuk.kinesisgui.KinesisService
-import com.yuk.kinesisgui.StreamTrackerManager
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.tabs.Tab
+import com.vaadin.flow.component.tabs.Tabs
 
-@Route(value = "")
-@PageTitle("Kinesis GUI By Vaadin")
-class MainView(
-    kinesisService: KinesisService,
-    streamTrackerManager: StreamTrackerManager
-) : AppLayout() {
+class MainView: VerticalLayout() {
     init {
-        GuiController.setKinesisService(kinesisService)
-        GuiController.setStreamTrackerManager(streamTrackerManager)
+        val eventViewTab = Tab("Event View")
+        val monitorViewTab = Tab("Monitor View")
 
-        val title = H1("Event Viewer")
-        title.style.set("font-size", "var(--lumo-font-size-l)")["margin"] = "0"
+        val contentTab = Tabs()
+        contentTab.add(eventViewTab)
+        contentTab.add(monitorViewTab)
 
-        addToDrawer(StreamView())
-        addToNavbar(DrawerToggle(), title)
+        val content = VerticalLayout()
+        content.isSpacing = false
+        content.isPadding = false
+        content.setSizeFull()
 
         val eventView = EventView()
-        content = eventView
-        GuiController.setGrid(eventView.eventGrid)
+        EventGuiController.setGrid(eventView.eventGrid)
+        content.add(eventView)
+
+        setSizeFull()
+        isSpacing = false
+        isPadding = false
+        add(contentTab, content)
+
+        contentTab.addSelectedChangeListener {
+            content.removeAll()
+
+            if(it.selectedTab == eventViewTab) {
+                val newEventView = EventView()
+                EventGuiController.setGrid(newEventView.eventGrid)
+                content.add(newEventView)
+            } else {
+                EventGuiController.stopTracking()
+                val monitorView = MonitorView()
+                MonitorGuiController.setMonitorView(monitorView)
+                monitorView.init()
+                content.add(monitorView)
+            }
+        }
     }
 }

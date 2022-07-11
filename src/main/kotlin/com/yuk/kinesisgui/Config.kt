@@ -1,5 +1,7 @@
 package com.yuk.kinesisgui
 
+import com.amazonaws.services.cloudwatch.AmazonCloudWatch
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder
 import com.amazonaws.services.kinesis.AmazonKinesis
 import com.amazonaws.services.kinesis.AmazonKinesisAsyncClientBuilder
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -34,6 +36,14 @@ class Config : AppShellConfigurator {
         builder.region = region
 
         return builder.build()
+    }
+
+    @Bean
+    fun cloudWatchOperator(): AmazonCloudWatch {
+        val cloudWatchClient =
+            AmazonCloudWatchClientBuilder.defaultClient()
+
+        return cloudWatchClient
     }
 
     @Bean

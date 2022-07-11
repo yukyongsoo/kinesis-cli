@@ -25,21 +25,21 @@ class Toolbar : HorizontalLayout() {
         val button = Button("Add Record")
         button.addClickListener {
             dateTimePicker.value = null
-            GuiController.addRecord(recordText.value)
+            EventGuiController.addRecord(recordText.value)
         }
 
         val checkBox = Checkbox("Trim Horizon")
         checkBox.addValueChangeListener {
-            GuiController.trimHorizon(checkBox.value)
+            EventGuiController.trimHorizon(checkBox.value)
         }
 
         dateTimePicker.addValueChangeListener {
             checkBox.value = false
-            GuiController.afterTime(dateTimePicker.value)
+            EventGuiController.afterTime(dateTimePicker.value)
         }
 
         val link = FileDownloadWrapper("event.csv") {
-            GuiController.exportExcel()
+            EventGuiController.exportExcel()
         }
         link.setText("Download CSV")
 

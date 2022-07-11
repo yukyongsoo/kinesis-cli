@@ -28,6 +28,8 @@ dependencies {
 
     implementation("com.vaadin:vaadin-spring-boot-starter")
     implementation("org.vaadin.olli:file-download-wrapper:4.0.0")
+    implementation("com.storedobject.chart:so-charts:3.0.0")
+    implementation("org.vaadin.addons.componentfactory:vcf-gridlayout:1.0.1")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")
