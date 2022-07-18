@@ -15,9 +15,11 @@ object MonitorGuiController {
     }
 
     fun setMetric() {
-        val metrics = metricClassifier.classify(CurrentState.streamName)
-        metrics.sortAll()
+        if (this::monitorView.isInitialized && monitorView.isAttached) {
+            val metrics = metricClassifier.classify(CurrentState.streamName)
+            metrics.sortAll()
 
-        monitorView.setChart(metrics)
+            monitorView.setChart(metrics)
+        }
     }
 }

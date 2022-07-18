@@ -11,6 +11,7 @@ object EventGuiController {
     private lateinit var streamTrackerManager: StreamTrackerManager
     private lateinit var gridRecordProcessor: GridRecordProcessor
     private lateinit var grid: EventGrid
+    private var currentTrackStreamName = ""
 
     fun setKinesisService(kinesisService: KinesisService) {
         this.kinesisService = kinesisService
@@ -29,18 +30,20 @@ object EventGuiController {
         return kinesisService.getStreamList()
     }
 
-    fun selectedStream(streamName: String) {
+    fun selectedStream() {
         if (this::grid.isInitialized && grid.isAttached) {
             grid.clean()
 
-            if (streamTrackerManager.isTracked(streamName).not()) {
-                streamTrackerManager.startTracking(streamName)
+            if (streamTrackerManager.isTracked(CurrentState.streamName).not()) {
+                streamTrackerManager.startTracking(CurrentState.streamName)
             }
 
-            if (streamName != CurrentState.streamName) {
-                streamTrackerManager.removeRecordProcessor(CurrentState.streamName, gridRecordProcessor)
-                streamTrackerManager.addRecordProcessor(streamName, gridRecordProcessor)
+            if (currentTrackStreamName != CurrentState.streamName) {
+                streamTrackerManager.removeRecordProcessor(currentTrackStreamName, gridRecordProcessor)
+                streamTrackerManager.addRecordProcessor(CurrentState.streamName, gridRecordProcessor)
             }
+
+            currentTrackStreamName = CurrentState.streamName
         }
     }
 
