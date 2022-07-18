@@ -14,10 +14,9 @@ import com.storedobject.chart.YAxis
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import java.time.LocalDateTime
 
-
 class Chart(
     private val name: String
-): VerticalLayout() {
+) : VerticalLayout() {
     val chart: SOChart
     val xValues = TimeData()
     val yValues = Data()
@@ -32,6 +31,7 @@ class Chart(
 
         val lineChart = LineChart(xValues, yValues)
         lineChart.name = name
+        lineChart.setSmoothness(true)
 
         val position = Position().apply {
             alignBottom()
@@ -56,13 +56,13 @@ class Chart(
 
         ui.ifPresent {
             it.access {
-                chart.update()
+                chart.update(false)
                 it.push()
             }
         }
     }
 
-    fun addAllData(data: List<Pair<LocalDateTime,Double>>) {
+    fun addAllData(data: List<Pair<LocalDateTime, Double>>) {
         data.forEach { (dateTime, data) ->
             xValues.add(dateTime)
             yValues.add(data)
@@ -70,7 +70,7 @@ class Chart(
 
         ui.ifPresent {
             it.access {
-                chart.update()
+                chart.update(false)
                 it.push()
             }
         }

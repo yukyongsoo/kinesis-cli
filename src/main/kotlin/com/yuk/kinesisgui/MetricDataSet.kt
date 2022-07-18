@@ -5,24 +5,24 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 class MetricDataSet {
-    val putRecordsTotal = mutableListOf<Pair<LocalDateTime,Double>>()
-    val putRecordsByte = mutableListOf<Pair<LocalDateTime,Double>>()
-    val putRecordLatency = mutableListOf<Pair<LocalDateTime,Double>>()
-    val putRecordThrottled = mutableListOf<Pair<LocalDateTime,Double>>()
-    val putRecordsSuccess = mutableListOf<Pair<LocalDateTime,Double>>()
-    val putRecordsFailed = mutableListOf<Pair<LocalDateTime,Double>>()
-    val incomingRecords = mutableListOf<Pair<LocalDateTime,Double>>()
-    val subscribeToShardEventMillisBehindLatest = mutableListOf<Pair<LocalDateTime,Double>>()
-    val subscribeToShardEventSuccess = mutableListOf<Pair<LocalDateTime,Double>>()
-    val subscribeToShardRecord = mutableListOf<Pair<LocalDateTime,Double>>()
-    val subscribeToShardRateExceeded = mutableListOf<Pair<LocalDateTime,Double>>()
-    val writeProvisionedThroughputExceeded = mutableListOf<Pair<LocalDateTime,Double>>()
+    val putRecordsTotal = mutableListOf<Pair<LocalDateTime, Double>>()
+    val putRecordsByte = mutableListOf<Pair<LocalDateTime, Double>>()
+    val putRecordLatency = mutableListOf<Pair<LocalDateTime, Double>>()
+    val putRecordThrottled = mutableListOf<Pair<LocalDateTime, Double>>()
+    val putRecordsSuccess = mutableListOf<Pair<LocalDateTime, Double>>()
+    val putRecordsFailed = mutableListOf<Pair<LocalDateTime, Double>>()
+    val incomingRecords = mutableListOf<Pair<LocalDateTime, Double>>()
+    val subscribeToShardEventMillisBehindLatest = mutableListOf<Pair<LocalDateTime, Double>>()
+    val subscribeToShardEventSuccess = mutableListOf<Pair<LocalDateTime, Double>>()
+    val subscribeToShardRecord = mutableListOf<Pair<LocalDateTime, Double>>()
+    val subscribeToShardRateExceeded = mutableListOf<Pair<LocalDateTime, Double>>()
+    val writeProvisionedThroughputExceeded = mutableListOf<Pair<LocalDateTime, Double>>()
 
     fun addAll(metricDataResults: List<MetricDataResult>) {
-        metricDataResults.forEach {result ->
+        metricDataResults.forEach { result ->
             val timeToValue = result.timestamps.zip(result.values)
 
-            timeToValue.forEach {(date, value) ->
+            timeToValue.forEach { (date, value) ->
                 val localDateTime = Timestamp(date.time).toLocalDateTime()
 
                 when (result.label) {

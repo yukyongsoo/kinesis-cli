@@ -4,7 +4,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
 
-class MainView: VerticalLayout() {
+class MainView : VerticalLayout() {
+    private val eventView: EventView
+    private val monitorView: MonitorView
+
     init {
         val eventViewTab = Tab("Event View")
         val monitorViewTab = Tab("Monitor View")
@@ -18,8 +21,8 @@ class MainView: VerticalLayout() {
         content.isPadding = false
         content.setSizeFull()
 
-        val eventView = EventView()
-        EventGuiController.setGrid(eventView.eventGrid)
+        eventView = EventView()
+        monitorView = MonitorView()
         content.add(eventView)
 
         setSizeFull()
@@ -30,15 +33,9 @@ class MainView: VerticalLayout() {
         contentTab.addSelectedChangeListener {
             content.removeAll()
 
-            if(it.selectedTab == eventViewTab) {
-                val newEventView = EventView()
-                EventGuiController.setGrid(newEventView.eventGrid)
-                content.add(newEventView)
+            if (it.selectedTab == eventViewTab) {
+                content.add(eventView)
             } else {
-                EventGuiController.stopTracking()
-                val monitorView = MonitorView()
-                MonitorGuiController.setMonitorView(monitorView)
-                monitorView.init()
                 content.add(monitorView)
             }
         }
