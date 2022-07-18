@@ -1,6 +1,7 @@
 package com.yuk.kinesisgui.gui
 
 import com.storedobject.chart.Data
+import com.storedobject.chart.DataChannel
 import com.storedobject.chart.DataType
 import com.storedobject.chart.Legend
 import com.storedobject.chart.LineChart
@@ -20,6 +21,7 @@ class Chart(
     val chart: SOChart
     val xValues = TimeData()
     val yValues = Data()
+    val dataChannel: DataChannel
 
     init {
         setSizeFull()
@@ -31,6 +33,7 @@ class Chart(
 
         val lineChart = LineChart(xValues, yValues)
         lineChart.name = name
+        lineChart.setSmoothness(true)
 
         val position = Position().apply {
             alignBottom()
@@ -44,6 +47,8 @@ class Chart(
         val rc = RectangularCoordinate(xAxis, yAxis)
         lineChart.plotOn(rc)
 
+        dataChannel = DataChannel(chart, xValues, yValues)
+
         chart.add(lineChart, Title(name), legend)
 
         add(chart)
@@ -55,8 +60,7 @@ class Chart(
 
         ui.ifPresent {
             it.access {
-                chart.update()
-                it.push()
+                dataChannel.append(dateTime, data)
             }
         }
     }
@@ -65,12 +69,11 @@ class Chart(
         data.forEach { (dateTime, data) ->
             xValues.add(dateTime)
             yValues.add(data)
-        }
 
-        ui.ifPresent {
-            it.access {
-                chart.update()
-                it.push()
+            ui.ifPresent {
+                it.access {
+                    dataChannel.append(dateTime, data)
+                }
             }
         }
     }

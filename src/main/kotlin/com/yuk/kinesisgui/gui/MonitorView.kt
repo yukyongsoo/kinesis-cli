@@ -74,6 +74,12 @@ class MonitorView : GridLayout(3, 10) {
         subscribeToShardRecord.addAllData(dataSet.subscribeToShardRecord)
         subscribeToShardRateExceeded.addAllData(dataSet.subscribeToShardRateExceeded)
         writeProvisionedThroughputExceeded.addAllData(dataSet.writeProvisionedThroughputExceeded)
+
+        ui.ifPresent {
+            it.access{
+                it.push()
+            }
+        }
     }
 
     fun clear() {
