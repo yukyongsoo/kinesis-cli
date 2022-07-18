@@ -24,7 +24,7 @@ extra["vaadinVersion"] = "23.1.2"
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 
     implementation("com.vaadin:vaadin-spring-boot-starter")
     implementation("org.vaadin.olli:file-download-wrapper:4.0.0")

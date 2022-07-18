@@ -1,6 +1,8 @@
 package com.yuk.kinesisgui.gui
 
+import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.DetachEvent
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
 import com.vaadin.flow.component.html.Label
@@ -25,8 +27,7 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         val timeColumn = addColumn(RecordData::eventTime).setAutoWidth(true)
         val shardIdColumn = addColumn(RecordData::shardId).setAutoWidth(true)
         // val partitionKeyColumn = addColumn(RecordData::partitionKey).setAutoWidth(true)
-        val seqColumn = addColumn(RecordData::seq) // .setAutoWidth(true)
-        seqColumn.width = "700px"
+        val seqColumn = addColumn(RecordData::seq).setAutoWidth(true)
         val typeColumn = addColumn(RecordData::eventType).setAutoWidth(true)
         val sourceColumn = addColumn(RecordData::source).setAutoWidth(true)
         val dataColumn = addColumn(RecordData::data).setAutoWidth(true)
@@ -34,6 +35,17 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT)
 
         setHeader(recordTimeColumn, timeColumn, shardIdColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
+    }
+
+    override fun onAttach(attachEvent: AttachEvent?) {
+        super.onAttach(attachEvent)
+        EventGuiController.setGrid(this)
+    }
+
+    override fun onDetach(detachEvent: DetachEvent) {
+        super.onDetach(detachEvent)
+        EventGuiController.stopTracking()
+        clean()
     }
 
     private fun setHeader(
@@ -58,9 +70,11 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         headerRow.getCell(shardIdColumn).setComponent(
             createFilterHeader("shardId", filterChangeConsumer = eventGridSearchFilter::shardId::set)
         )
+
 //        headerRow.getCell(partitionKeyColumn).setComponent(
 //            createFilterHeader("partitionKey", filterChangeConsumer = eventGridSearchFilter::partitionKey::set)
 //        )
+
         headerRow.getCell(seqColumn).setComponent(
             createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set)
         )
@@ -106,11 +120,6 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         }
 
         return layout
-    }
-
-    fun addItem(item: RecordData) = refreshUI {
-        items.add(item)
-        dropMaxItems()
     }
 
     fun addItems(items: Collection<RecordData>) = refreshUI {

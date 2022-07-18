@@ -20,9 +20,4 @@ object MonitorGuiController {
 
         monitorView.setChart(metrics)
     }
-
-    fun selectedStream(streamName: String) {
-        monitorView.clear()
-        setMetric()
-    }
 }

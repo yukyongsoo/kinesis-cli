@@ -2,7 +2,6 @@ package com.yuk.kinesisgui.gui
 
 import com.yuk.kinesisgui.ExcelUtil
 import com.yuk.kinesisgui.KinesisService
-import com.yuk.kinesisgui.MonitoringService
 import com.yuk.kinesisgui.StreamTrackerManager
 import com.yuk.kinesisgui.processor.GridRecordProcessor
 import java.time.LocalDateTime
@@ -31,27 +30,30 @@ object EventGuiController {
     }
 
     fun selectedStream(streamName: String) {
-        grid.clean()
+        if (this::grid.isInitialized && grid.isAttached) {
+            grid.clean()
 
-        if (streamTrackerManager.isTracked(streamName).not()) {
-            streamTrackerManager.startTracking(streamName)
-        }
+            if (streamTrackerManager.isTracked(streamName).not()) {
+                streamTrackerManager.startTracking(streamName)
+            }
 
-        if (streamName != CurrentState.streamName) {
-            streamTrackerManager.removeRecordProcessor(CurrentState.streamName, gridRecordProcessor)
-            streamTrackerManager.addRecordProcessor(streamName, gridRecordProcessor)
-            CurrentState.streamName = streamName
+            if (streamName != CurrentState.streamName) {
+                streamTrackerManager.removeRecordProcessor(CurrentState.streamName, gridRecordProcessor)
+                streamTrackerManager.addRecordProcessor(streamName, gridRecordProcessor)
+            }
         }
     }
 
     fun trimHorizon(trimHorizon: Boolean) {
-        grid.clean()
+        if (this::grid.isInitialized && grid.isAttached) {
+            grid.clean()
 
-        if (streamTrackerManager.isTracked(CurrentState.streamName))
-            streamTrackerManager.stopTracking(CurrentState.streamName)
+            if (streamTrackerManager.isTracked(CurrentState.streamName))
+                streamTrackerManager.stopTracking(CurrentState.streamName)
 
-        streamTrackerManager.startTracking(CurrentState.streamName, trimHorizon)
-        streamTrackerManager.addRecordProcessor(CurrentState.streamName, gridRecordProcessor)
+            streamTrackerManager.startTracking(CurrentState.streamName, trimHorizon)
+            streamTrackerManager.addRecordProcessor(CurrentState.streamName, gridRecordProcessor)
+        }
     }
 
     fun stopTracking() {
@@ -60,13 +62,15 @@ object EventGuiController {
     }
 
     fun afterTime(afterTime: LocalDateTime) {
-        grid.clean()
+        if (this::grid.isInitialized && grid.isAttached) {
+            grid.clean()
 
-        if (streamTrackerManager.isTracked(CurrentState.streamName))
-            streamTrackerManager.stopTracking(CurrentState.streamName)
+            if (streamTrackerManager.isTracked(CurrentState.streamName))
+                streamTrackerManager.stopTracking(CurrentState.streamName)
 
-        streamTrackerManager.startTracking(CurrentState.streamName, afterTime = afterTime)
-        streamTrackerManager.addRecordProcessor(CurrentState.streamName, gridRecordProcessor)
+            streamTrackerManager.startTracking(CurrentState.streamName, afterTime = afterTime)
+            streamTrackerManager.addRecordProcessor(CurrentState.streamName, gridRecordProcessor)
+        }
     }
 
     fun addRecord(record: String) {
@@ -78,5 +82,4 @@ object EventGuiController {
         ExcelUtil.createFile(list)
         return ExcelUtil.readFile()
     }
-
 }

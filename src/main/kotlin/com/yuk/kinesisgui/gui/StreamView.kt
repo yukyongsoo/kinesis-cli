@@ -16,8 +16,6 @@ class StreamView : Tabs() {
 
         addSelectedChangeListener { event ->
             CurrentState.streamName = event.selectedTab.label
-            EventGuiController.selectedStream(event.selectedTab.label)
-            MonitorGuiController.selectedStream(event.selectedTab.label)
         }
     }
 }

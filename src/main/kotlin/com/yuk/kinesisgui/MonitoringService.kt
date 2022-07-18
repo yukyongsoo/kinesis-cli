@@ -13,7 +13,6 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.UUID
 
-
 @Service
 class MonitoringService(
     private val client: AmazonCloudWatch
@@ -24,8 +23,8 @@ class MonitoringService(
         val metricList = buildList<Metric> {
             do {
                 val listMetricsRequest = ListMetricsRequest().withNamespace("AWS/Kinesis")
-                        .withDimensions(DimensionFilter().withName("StreamName").withValue(streamName))
-                        .withNextToken(nextToken)
+                    .withDimensions(DimensionFilter().withName("StreamName").withValue(streamName))
+                    .withNextToken(nextToken)
 
                 val listMetricsResult = client.listMetrics(listMetricsRequest)
 
