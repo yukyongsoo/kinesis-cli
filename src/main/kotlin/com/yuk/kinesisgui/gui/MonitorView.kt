@@ -1,11 +1,11 @@
 package com.yuk.kinesisgui.gui
 
 import com.vaadin.componentfactory.gridlayout.GridLayout
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout
-import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.AttachEvent
+import com.vaadin.flow.component.DetachEvent
 import com.yuk.kinesisgui.MetricDataSet
 
-class MonitorView: GridLayout(3,10) {
+class MonitorView : GridLayout(3, 10) {
     val putRecordsTotal: Chart
     val putRecordsByte: Chart
     val putRecordLatency: Chart
@@ -50,8 +50,15 @@ class MonitorView: GridLayout(3,10) {
         addComponent(writeProvisionedThroughputExceeded)
     }
 
-    fun init() {
+    override fun onAttach(attachEvent: AttachEvent?) {
+        super.onAttach(attachEvent)
+        MonitorGuiController.setMonitorView(this)
         MonitorGuiController.setMetric()
+    }
+
+    override fun onDetach(detachEvent: DetachEvent?) {
+        super.onDetach(detachEvent)
+        clear()
     }
 
     fun setChart(dataSet: MetricDataSet) {
@@ -67,6 +74,12 @@ class MonitorView: GridLayout(3,10) {
         subscribeToShardRecord.addAllData(dataSet.subscribeToShardRecord)
         subscribeToShardRateExceeded.addAllData(dataSet.subscribeToShardRateExceeded)
         writeProvisionedThroughputExceeded.addAllData(dataSet.writeProvisionedThroughputExceeded)
+
+        ui.ifPresent {
+            it.access{
+                it.push()
+            }
+        }
     }
 
     fun clear() {

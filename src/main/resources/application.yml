@@ -1,0 +1,2 @@
+vaadin:
+  whitelisted-packages: com.vaadin,org.vaadin,com.storedobject

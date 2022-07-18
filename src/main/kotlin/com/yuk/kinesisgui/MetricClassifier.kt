@@ -1,5 +1,8 @@
 package com.yuk.kinesisgui
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -11,8 +14,12 @@ class MetricClassifier(
         val metrics = monitoringService.getStreamMetricList(streamName)
         val dataset = MetricDataSet()
 
-        val results = metrics.map { metric ->
-            monitoringService.getMetric(metric, LocalDateTime.now().minusHours(6))
+        val results = runBlocking {
+            val deferred = metrics.map { metric ->
+                async { monitoringService.getMetric(metric, LocalDateTime.now().minusHours(6)) }
+            }
+
+            deferred.awaitAll()
         }
 
         results.forEach {
@@ -21,5 +28,4 @@ class MetricClassifier(
 
         return dataset
     }
-
 }
