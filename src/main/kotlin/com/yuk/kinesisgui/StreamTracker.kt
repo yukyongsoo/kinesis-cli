@@ -107,6 +107,9 @@ class StreamTracker(
 
                     val records: Set<RecordData> = deaggregationRecords.flatMapTo(mutableSetOf()) { record ->
                         try {
+                            //raw json
+                            //println(String(record.data.array()))
+
                             Config.objectMapper.readerFor(RecordData::class.java).readValues<RecordData>(record.data.array())
                                 .asSequence()
                                 .map {
