@@ -76,7 +76,7 @@ class MonitorView : GridLayout(3, 10) {
         writeProvisionedThroughputExceeded.addAllData(dataSet.writeProvisionedThroughputExceeded)
 
         ui.ifPresent {
-            it.access{
+            it.access {
                 it.push()
             }
         }

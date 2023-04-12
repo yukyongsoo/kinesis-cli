@@ -36,12 +36,11 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.shell:spring-shell-starter:2.0.1.RELEASE")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.213"))
+    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.446"))
     implementation("com.amazonaws:aws-java-sdk-kinesis")
-    implementation("com.amazonaws:amazon-kinesis-client:1.14.8")
+    implementation("com.amazonaws:amazon-kinesis-client:1.14.10")
 }
 
 dependencyManagement {
