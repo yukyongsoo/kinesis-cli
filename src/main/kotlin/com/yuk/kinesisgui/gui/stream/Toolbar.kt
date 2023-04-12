@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui.gui
+package com.yuk.kinesisgui.gui.stream
 
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.checkbox.Checkbox
@@ -7,6 +7,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.value.ValueChangeMode
+import com.yuk.kinesisgui.gui.EventGuiController
 import org.vaadin.olli.FileDownloadWrapper
 
 class Toolbar : HorizontalLayout() {

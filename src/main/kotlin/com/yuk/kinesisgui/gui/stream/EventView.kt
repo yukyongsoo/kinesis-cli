@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui.gui
+package com.yuk.kinesisgui.gui.stream
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.yuk.kinesisgui.stream.RecordData

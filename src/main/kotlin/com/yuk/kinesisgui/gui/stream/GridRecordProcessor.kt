@@ -1,7 +1,7 @@
-package com.yuk.kinesisgui.processor
+package com.yuk.kinesisgui.gui.stream
 
 import com.yuk.kinesisgui.stream.RecordData
-import com.yuk.kinesisgui.gui.EventGrid
+import com.yuk.kinesisgui.stream.RecordProcessor
 
 class GridRecordProcessor(
     private val eventGrid: EventGrid

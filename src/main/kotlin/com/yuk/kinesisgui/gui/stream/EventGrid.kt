@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui.gui
+package com.yuk.kinesisgui.gui.stream
 
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.Component
@@ -10,6 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
+import com.yuk.kinesisgui.gui.EventGuiController
 import com.yuk.kinesisgui.stream.RecordData
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.function.Consumer

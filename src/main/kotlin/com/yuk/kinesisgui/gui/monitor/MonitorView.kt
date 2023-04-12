@@ -1,8 +1,9 @@
-package com.yuk.kinesisgui.gui
+package com.yuk.kinesisgui.gui.monitor
 
 import com.vaadin.componentfactory.gridlayout.GridLayout
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.DetachEvent
+import com.yuk.kinesisgui.gui.Chart
 import com.yuk.kinesisgui.metric.MetricDataSet
 
 class MonitorView : GridLayout(3, 10) {

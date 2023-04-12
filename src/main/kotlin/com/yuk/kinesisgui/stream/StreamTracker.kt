@@ -2,7 +2,6 @@ package com.yuk.kinesisgui.stream
 
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.yuk.kinesisgui.Config
-import com.yuk.kinesisgui.processor.RecordProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

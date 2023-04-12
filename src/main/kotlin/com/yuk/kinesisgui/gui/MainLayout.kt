@@ -5,8 +5,9 @@ import com.vaadin.flow.component.applayout.DrawerToggle
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
-import com.yuk.kinesisgui.stream.KinesisService
+import com.yuk.kinesisgui.gui.monitor.MonitorGuiController
 import com.yuk.kinesisgui.metric.MetricClassifier
+import com.yuk.kinesisgui.stream.KinesisService
 import com.yuk.kinesisgui.stream.StreamTrackerManager
 
 @Route(value = "")

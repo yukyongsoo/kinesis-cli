@@ -3,6 +3,8 @@ package com.yuk.kinesisgui.gui
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
+import com.yuk.kinesisgui.gui.monitor.MonitorView
+import com.yuk.kinesisgui.gui.stream.EventView
 
 class MainView : VerticalLayout() {
     private val eventView: EventView

@@ -1,6 +1,4 @@
-package com.yuk.kinesisgui.processor
-
-import com.yuk.kinesisgui.stream.RecordData
+package com.yuk.kinesisgui.stream
 
 interface RecordProcessor {
     fun processRecord(records: Collection<RecordData>)

@@ -1,6 +1,5 @@
 package com.yuk.kinesisgui.stream
 
-import com.yuk.kinesisgui.processor.RecordProcessor
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
