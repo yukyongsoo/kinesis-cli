@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.metric
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model.DimensionFilter

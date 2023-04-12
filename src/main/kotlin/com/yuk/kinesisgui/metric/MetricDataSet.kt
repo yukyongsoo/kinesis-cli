@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.metric
 
 import com.amazonaws.services.cloudwatch.model.MetricDataResult
 import java.sql.Timestamp

@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.metric
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

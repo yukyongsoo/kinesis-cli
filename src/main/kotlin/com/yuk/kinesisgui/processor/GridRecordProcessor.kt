@@ -1,6 +1,6 @@
 package com.yuk.kinesisgui.processor
 
-import com.yuk.kinesisgui.RecordData
+import com.yuk.kinesisgui.stream.RecordData
 import com.yuk.kinesisgui.gui.EventGrid
 
 class GridRecordProcessor(

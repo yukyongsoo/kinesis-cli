@@ -10,7 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
-import com.yuk.kinesisgui.RecordData
+import com.yuk.kinesisgui.stream.RecordData
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.function.Consumer
 

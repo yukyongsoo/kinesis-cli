@@ -1,7 +1,7 @@
 package com.yuk.kinesisgui.gui
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.yuk.kinesisgui.RecordData
+import com.yuk.kinesisgui.stream.RecordData
 
 class EventView : VerticalLayout() {
     val eventGrid = EventGrid(RecordData::class.java)

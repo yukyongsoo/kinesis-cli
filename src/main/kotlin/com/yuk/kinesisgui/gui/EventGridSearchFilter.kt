@@ -1,6 +1,6 @@
 package com.yuk.kinesisgui.gui
 
-import com.yuk.kinesisgui.RecordData
+import com.yuk.kinesisgui.stream.RecordData
 import java.util.Locale
 
 class EventGridSearchFilter {

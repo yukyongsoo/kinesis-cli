@@ -2,6 +2,7 @@ package com.yuk.kinesisgui
 
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.yuk.kinesisgui.stream.RecordData
 import java.io.FileInputStream
 import java.io.FileWriter
 

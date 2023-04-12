@@ -1,6 +1,6 @@
 package com.yuk.kinesisgui.gui
 
-import com.yuk.kinesisgui.MetricClassifier
+import com.yuk.kinesisgui.metric.MetricClassifier
 
 object MonitorGuiController {
     private lateinit var metricClassifier: MetricClassifier

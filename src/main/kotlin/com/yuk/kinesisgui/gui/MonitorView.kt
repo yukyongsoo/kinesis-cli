@@ -3,7 +3,7 @@ package com.yuk.kinesisgui.gui
 import com.vaadin.componentfactory.gridlayout.GridLayout
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.DetachEvent
-import com.yuk.kinesisgui.MetricDataSet
+import com.yuk.kinesisgui.metric.MetricDataSet
 
 class MonitorView : GridLayout(3, 10) {
     val putRecordsTotal: Chart

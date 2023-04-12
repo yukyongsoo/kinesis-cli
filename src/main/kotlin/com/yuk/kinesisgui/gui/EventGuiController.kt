@@ -1,8 +1,8 @@
 package com.yuk.kinesisgui.gui
 
 import com.yuk.kinesisgui.ExcelUtil
-import com.yuk.kinesisgui.KinesisService
-import com.yuk.kinesisgui.StreamTrackerManager
+import com.yuk.kinesisgui.stream.KinesisService
+import com.yuk.kinesisgui.stream.StreamTrackerManager
 import com.yuk.kinesisgui.processor.GridRecordProcessor
 import java.time.LocalDateTime
 

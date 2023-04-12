@@ -1,5 +1,7 @@
 package com.yuk.kinesisgui
 
+import com.yuk.kinesisgui.metric.MetricClassifier
+import com.yuk.kinesisgui.stream.KinesisService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

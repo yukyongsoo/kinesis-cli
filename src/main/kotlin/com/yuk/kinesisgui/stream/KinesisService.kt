@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.stream
 
 import com.amazonaws.services.kinesis.AmazonKinesis
 import com.amazonaws.services.kinesis.model.GetRecordsRequest

@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui
+package com.yuk.kinesisgui.stream
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
