@@ -26,7 +26,6 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         val recordTimeColumn = addColumn(RecordData::recordTime).setAutoWidth(true)
         val timeColumn = addColumn(RecordData::eventTime).setAutoWidth(true)
         val shardIdColumn = addColumn(RecordData::shardId).setAutoWidth(true)
-        // val partitionKeyColumn = addColumn(RecordData::partitionKey).setAutoWidth(true)
         val seqColumn = addColumn(RecordData::seq).setAutoWidth(true)
         val typeColumn = addColumn(RecordData::eventType).setAutoWidth(true)
         val sourceColumn = addColumn(RecordData::source).setAutoWidth(true)
@@ -52,7 +51,6 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         recordColumn: Column<RecordData>,
         timeColumn: Column<RecordData>,
         shardIdColumn: Column<RecordData>,
-        // partitionKeyColumn: Column<RecordData>,
         seqColumn: Column<RecordData>,
         typeColumn: Column<RecordData>,
         sourceColumn: Column<RecordData>,
@@ -70,10 +68,6 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         headerRow.getCell(shardIdColumn).setComponent(
             createFilterHeader("shardId", filterChangeConsumer = eventGridSearchFilter::shardId::set)
         )
-
-//        headerRow.getCell(partitionKeyColumn).setComponent(
-//            createFilterHeader("partitionKey", filterChangeConsumer = eventGridSearchFilter::partitionKey::set)
-//        )
 
         headerRow.getCell(seqColumn).setComponent(
             createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set)
