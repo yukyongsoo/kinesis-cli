@@ -1,11 +1,15 @@
 package com.yuk.kinesisgui.stream
 
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.yuk.kinesisgui.Config
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
@@ -22,17 +26,24 @@ class StreamTracker(
         afterTime: LocalDateTime?
     ) {
         this.streamName = streamName
-        setShardTracker(trimHorizon, afterTime)
+        setShardTracker(streamName, trimHorizon, afterTime)
+        registerRecordProcessor()
     }
 
     fun stop() {
         shardTrackerMap.forEach { (_, shardTracker) ->
             shardTracker.stop()
         }
+
+        shardTrackerMap.clear()
     }
 
-    private fun setShardTracker(trimHorizon: Boolean, afterTime: LocalDateTime?) {
-        val ids = kinesisService.getShardIds(streamName)
+    private fun setShardTracker(
+        streamName: String,
+        trimHorizon: Boolean,
+        afterTime: LocalDateTime?
+    ) {
+        val ids = kinesisService.getShardIds(this.streamName)
 
         val shardIteratorType = when {
             trimHorizon -> "TRIM_HORIZON"
@@ -43,16 +54,28 @@ class StreamTracker(
         val searchDate = Timestamp.valueOf(afterTime ?: LocalDateTime.now())
 
         ids.map { id ->
-            val iter = kinesisService.getShardIterator(streamName, id, shardIteratorType, searchDate)
-            val tracker = ShardTracker(kinesisService, iter, id)
+            val iter = kinesisService.getShardIterator(this.streamName, id, shardIteratorType, searchDate)
+            val tracker = ShardTracker(kinesisService, streamName, iter, id)
 
             shardTrackerMap[id] = tracker
             tracker.start()
         }
     }
 
+    private fun registerRecordProcessor() {
+        shardTrackerMap.forEach {
+            (_, shardTracker) ->
+            shardTracker.setRecordProcessors(recordProcessors)
+        }
+    }
+
     fun addRecordProcessor(recordProcessor: RecordProcessor) {
-        recordProcessors.add(recordProcessor)
+        if (shardTrackerMap.isEmpty())
+            throw IllegalStateException("tracker is not started")
+
+        if (recordProcessors.contains(recordProcessor).not())
+            recordProcessors.add(recordProcessor)
+
         shardTrackerMap.forEach {
             (_, shardTracker) ->
             shardTracker.setRecordProcessors(recordProcessors)
@@ -76,20 +99,26 @@ class StreamTracker(
         }
     }
 
-    class ShardTracker(
+    inner class ShardTracker(
         private val kinesisService: KinesisService,
+        private val stream: String,
         private var iterator: String,
         private var shardId: String
     ) {
         private var isRunning = false
         private var recordProcessors = mutableListOf<RecordProcessor>()
+        private lateinit var currentJob: Job
 
         fun setRecordProcessors(recordProcessors: MutableList<RecordProcessor>) {
             this.recordProcessors = recordProcessors
         }
 
         fun stop() {
-            isRunning = false
+            runBlocking {
+                isRunning = false
+                if (this@ShardTracker::currentJob.isInitialized)
+                    currentJob.cancelAndJoin()
+            }
         }
 
         fun start() {
@@ -100,31 +129,34 @@ class StreamTracker(
         }
 
         private fun getRecords() {
-            CoroutineScope(Dispatchers.IO).launch {
+            currentJob = CoroutineScope(Dispatchers.IO).launch {
+                delay(5000)
+
                 while (isRunning) {
+                    delay(1000)
+
                     val result = kinesisService.getRecords(iterator, 1000)
                     val deaggregationRecords = UserRecord.deaggregate(result.records)
 
-                    val records: Set<RecordData> = deaggregationRecords.flatMapTo(mutableSetOf()) { record ->
+                    val records: Set<RecordData> = deaggregationRecords.mapNotNullTo(mutableSetOf()) { record ->
                         try {
-                            // raw json
-                            // println(String(record.data.array()))
+                            val raw = String(record.data.array())
 
-                            Config.objectMapper.readerFor(RecordData::class.java).readValues<RecordData>(record.data.array())
-                                .asSequence()
-                                .map {
-                                    it.seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
-                                    it.recordTime = record.approximateArrivalTimestamp.toString()
-                                    it.shardId = shardId
-                                    it.partitionKey = record.partitionKey
-                                    it
-                                }
-                                .toSet()
+                            Config.objectMapper.readValue<RecordData>(raw).apply {
+                                seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
+                                recordTime = record.approximateArrivalTimestamp.toString()
+                                this.shardId = this@ShardTracker.shardId
+                                partitionKey = record.partitionKey
+                                this.raw = raw
+                            }
                         } catch (e: Exception) {
                             println("seq: ${record.sequenceNumber} message: ${e.message}")
-                            return@flatMapTo emptySet()
+                            return@mapNotNullTo null
                         }
                     }
+
+                    if (recordProcessors.isEmpty())
+                        println("recordProcessors is empty")
 
                     recordProcessors.forEach {
                         it.process(records)
@@ -135,8 +167,6 @@ class StreamTracker(
                     } else {
                         iterator = result.nextShardIterator
                     }
-
-                    delay(1000)
                 }
             }
         }
