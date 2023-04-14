@@ -3,10 +3,17 @@ package com.yuk.kinesisgui.gui.monitor
 import com.vaadin.componentfactory.gridlayout.GridLayout
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.DetachEvent
+import com.vaadin.flow.spring.annotation.SpringComponent
+import com.vaadin.flow.spring.annotation.UIScope
 import com.yuk.kinesisgui.gui.Chart
+import com.yuk.kinesisgui.gui.SessionContext
 import com.yuk.kinesisgui.metric.MetricDataSet
 
-class MonitorView : GridLayout(3, 10) {
+@UIScope
+@SpringComponent
+class MonitorView(
+    private val sessionContext: SessionContext
+) : GridLayout(3, 10) {
     val putRecordsTotal: Chart
     val putRecordsByte: Chart
     val putRecordLatency: Chart
@@ -53,8 +60,9 @@ class MonitorView : GridLayout(3, 10) {
 
     override fun onAttach(attachEvent: AttachEvent?) {
         super.onAttach(attachEvent)
-        MonitorGuiController.setMonitorView(this)
-        MonitorGuiController.setMetric()
+
+        val metrics = sessionContext.getMetrics()
+        setChart(metrics)
     }
 
     override fun onDetach(detachEvent: DetachEvent?) {
@@ -62,7 +70,7 @@ class MonitorView : GridLayout(3, 10) {
         clear()
     }
 
-    fun setChart(dataSet: MetricDataSet) {
+    private fun setChart(dataSet: MetricDataSet) {
         putRecordsTotal.addAllData(dataSet.putRecordsTotal)
         putRecordsByte.addAllData(dataSet.putRecordsByte)
         putRecordLatency.addAllData(dataSet.putRecordLatency)
@@ -83,7 +91,7 @@ class MonitorView : GridLayout(3, 10) {
         }
     }
 
-    fun clear() {
+    private fun clear() {
         putRecordsTotal.clear()
         putRecordsByte.clear()
         putRecordLatency.clear()
