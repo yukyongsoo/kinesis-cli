@@ -2,6 +2,8 @@
 
 Amazon kinesis 의 이벤트를 추적하고 관련 기능을 제공하는 web application
 
+![Home](./home.PNG)
+
 ## requirement
 
 1. java 11 or higher
