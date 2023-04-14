@@ -41,9 +41,11 @@ class MetricDataSet {
                 }
             }
         }
+
+        sortAll()
     }
 
-    fun sortAll() {
+    private fun sortAll() {
         putRecordsTotal.sortBy { it.first }
         putRecordsByte.sortBy { it.first }
         putRecordLatency.sortBy { it.first }

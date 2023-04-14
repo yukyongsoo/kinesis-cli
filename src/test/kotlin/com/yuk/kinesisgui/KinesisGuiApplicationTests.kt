@@ -23,7 +23,6 @@ class KinesisGuiApplicationTests {
     fun `메트릭 리스트 가져오기`() {
         val data = metricClassifier.classify("bun-product-inspection-event-prod")
 
-        data.sortAll()
         println(data)
     }
 }
