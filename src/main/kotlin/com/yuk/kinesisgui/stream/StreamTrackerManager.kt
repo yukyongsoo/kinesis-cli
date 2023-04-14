@@ -1,9 +1,8 @@
 package com.yuk.kinesisgui.stream
 
-import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
-@Service
+@Deprecated("", level = DeprecationLevel.HIDDEN)
 class StreamTrackerManager(
     private val kinesisService: KinesisService
 ) {
