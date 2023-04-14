@@ -1,12 +1,15 @@
 package com.yuk.kinesisgui.gui.stream
 
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.yuk.kinesisgui.stream.RecordData
+import com.vaadin.flow.spring.annotation.SpringComponent
+import com.vaadin.flow.spring.annotation.UIScope
 
-class EventView : VerticalLayout() {
-    val eventGrid = EventGrid(RecordData::class.java)
-    val toolbar = Toolbar()
-
+@UIScope
+@SpringComponent
+class EventView(
+    private val eventGrid: EventGrid,
+    private val toolbar: Toolbar
+) : VerticalLayout() {
     init {
         addClassName("stream-view")
         setSizeFull()

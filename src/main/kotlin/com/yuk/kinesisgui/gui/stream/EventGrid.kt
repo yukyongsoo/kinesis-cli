@@ -1,6 +1,5 @@
 package com.yuk.kinesisgui.gui.stream
 
-import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.DetachEvent
 import com.vaadin.flow.component.grid.Grid
@@ -10,15 +9,24 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
-import com.yuk.kinesisgui.gui.EventGuiController
+import com.vaadin.flow.spring.annotation.SpringComponent
+import com.vaadin.flow.spring.annotation.UIScope
+import com.yuk.kinesisgui.gui.SessionContext
 import com.yuk.kinesisgui.stream.RecordData
+import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.function.Consumer
 
-class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
+@UIScope
+@SpringComponent
+class EventGrid(
+    clazz: Class<RecordData> = RecordData::class.java,
+    private val sessionContext: SessionContext
+) : Grid<RecordData>(clazz, false) {
     private val items = ConcurrentSkipListSet<RecordData>()
     private val maxSize = 30000
     private val eventGridSearchFilter = EventGridSearchFilter()
+    val gridRecordProcessor = GridRecordProcessor(this)
 
     init {
         addClassNames("contact-grid")
@@ -37,16 +45,35 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
         setHeader(recordTimeColumn, timeColumn, shardIdColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
     }
 
-    override fun onAttach(attachEvent: AttachEvent?) {
-        super.onAttach(attachEvent)
-        EventGuiController.setGrid(this)
-    }
-
     override fun onDetach(detachEvent: DetachEvent) {
         super.onDetach(detachEvent)
-        EventGuiController.stopTracking()
         clean()
     }
+
+    fun addRecord(value: String) {
+        sessionContext.addRecord(value)
+    }
+
+    fun trimHorizon(value: Boolean) {
+        clean()
+        sessionContext.trimHorizon(value)
+    }
+
+    fun afterTime(value: LocalDateTime) {
+        clean()
+        sessionContext.afterTime(value)
+    }
+
+    fun addItems(items: Collection<RecordData>) = refreshUI {
+        this.items.addAll(items)
+        dropMaxItems()
+    }
+
+    fun clean() = refreshUI {
+        this.items.clear()
+    }
+
+    fun currentItems() = items.filter(eventGridSearchFilter::filter)
 
     private fun setHeader(
         recordColumn: Column<RecordData>,
@@ -116,16 +143,6 @@ class EventGrid(clazz: Class<RecordData>) : Grid<RecordData>(clazz, false) {
 
         return layout
     }
-
-    fun addItems(items: Collection<RecordData>) = refreshUI {
-        this.items.addAll(items)
-        dropMaxItems()
-    }
-
-    fun clean() = refreshUI {
-        this.items.clear()
-    }
-    fun currentItems() = items.filter(eventGridSearchFilter::filter)
 
     private fun dropMaxItems() = refreshUI {
         while (items.size > maxSize) {

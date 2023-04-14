@@ -3,28 +3,35 @@ package com.yuk.kinesisgui.gui
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
+import com.vaadin.flow.spring.annotation.SpringComponent
+import com.vaadin.flow.spring.annotation.UIScope
 import com.yuk.kinesisgui.gui.monitor.MonitorView
 import com.yuk.kinesisgui.gui.stream.EventView
 
-class MainView : VerticalLayout() {
-    private val eventView: EventView
+@UIScope
+@SpringComponent
+class MainView(
+    private val eventView: EventView,
     private val monitorView: MonitorView
+) : VerticalLayout() {
+    private lateinit var content: VerticalLayout
+    private lateinit var eventViewTab: Tab
+    private lateinit var monitorViewTab: Tab
+    private lateinit var contentTab: Tabs
 
     init {
-        val eventViewTab = Tab("Event View")
-        val monitorViewTab = Tab("Monitor View")
+        eventViewTab = Tab("Event View")
+        monitorViewTab = Tab("Monitor View")
 
-        val contentTab = Tabs()
+        contentTab = Tabs()
         contentTab.add(eventViewTab)
         contentTab.add(monitorViewTab)
 
-        val content = VerticalLayout()
+        content = VerticalLayout()
         content.isSpacing = false
         content.isPadding = false
         content.setSizeFull()
 
-        eventView = EventView()
-        monitorView = MonitorView()
         content.add(eventView)
 
         setSizeFull()
@@ -33,13 +40,17 @@ class MainView : VerticalLayout() {
         add(contentTab, content)
 
         contentTab.addSelectedChangeListener {
-            content.removeAll()
+            clear()
+        }
+    }
 
-            if (it.selectedTab == eventViewTab) {
-                content.add(eventView)
-            } else {
-                content.add(monitorView)
-            }
+    fun clear() {
+        content.removeAll()
+
+        if (contentTab.selectedTab == eventViewTab) {
+            content.add(eventView)
+        } else {
+            content.add(monitorView)
         }
     }
 }
