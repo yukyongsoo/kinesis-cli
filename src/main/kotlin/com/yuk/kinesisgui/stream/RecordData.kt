@@ -20,6 +20,8 @@ class RecordData(
     lateinit var shardId: String
     @JsonIgnore
     lateinit var partitionKey: String
+    @JsonIgnore
+    lateinit var raw: String
 
     override fun compareTo(other: RecordData): Int {
         return eventTime.compareTo(other.eventTime)
