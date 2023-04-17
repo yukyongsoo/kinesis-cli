@@ -6,7 +6,7 @@ import com.vaadin.flow.component.tabs.Tabs
 import com.vaadin.flow.spring.annotation.SpringComponent
 import com.vaadin.flow.spring.annotation.UIScope
 import com.yuk.kinesisgui.gui.monitor.MonitorView
-import com.yuk.kinesisgui.gui.stream.EventView
+import com.yuk.kinesisgui.gui.event.EventView
 
 @UIScope
 @SpringComponent
