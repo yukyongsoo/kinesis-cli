@@ -138,11 +138,12 @@ class StreamTracker(
                     val result = kinesisService.getRecords(iterator, 1000)
                     val deaggregationRecords = UserRecord.deaggregate(result.records)
 
-                    val records: Set<RecordData> = deaggregationRecords.mapNotNullTo(mutableSetOf()) { record ->
+                    val records = deaggregationRecords.mapNotNullTo(mutableSetOf()) { record ->
                         try {
                             val raw = String(record.data.array())
+                            val values = Config.objectMapper.readValue<MutableMap<String, Any?>>(raw)
 
-                            Config.objectMapper.readValue<RecordData>(raw).apply {
+                            RecordData(values).apply {
                                 seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
                                 recordTime = record.approximateArrivalTimestamp.toString()
                                 this.shardId = this@ShardTracker.shardId
