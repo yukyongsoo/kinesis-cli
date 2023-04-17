@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui.gui.stream
+package com.yuk.kinesisgui.gui.event
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.DetachEvent

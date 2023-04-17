@@ -2,7 +2,7 @@ package com.yuk.kinesisgui.gui
 
 import com.vaadin.flow.spring.annotation.SpringComponent
 import com.vaadin.flow.spring.annotation.UIScope
-import com.yuk.kinesisgui.gui.stream.EventGrid
+import com.yuk.kinesisgui.gui.event.EventGrid
 import com.yuk.kinesisgui.metric.MetricClassifier
 import com.yuk.kinesisgui.metric.MetricDataSet
 import com.yuk.kinesisgui.stream.KinesisService

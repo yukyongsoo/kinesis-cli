@@ -1,4 +1,4 @@
-package com.yuk.kinesisgui.gui.stream
+package com.yuk.kinesisgui.gui.event
 
 import com.yuk.kinesisgui.stream.RecordData
 import java.util.Locale
