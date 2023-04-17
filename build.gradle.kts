@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.yuk"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -28,6 +28,7 @@ dependencies {
 
     implementation("com.vaadin:vaadin-spring-boot-starter")
     implementation("org.vaadin.olli:file-download-wrapper:4.0.0")
+    implementation("org.vaadin.olli:clipboardhelper:1.2.0")
     implementation("com.storedobject.chart:so-charts:3.0.0")
     implementation("org.vaadin.addons.componentfactory:vcf-gridlayout:1.0.1")
 
