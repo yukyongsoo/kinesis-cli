@@ -11,6 +11,7 @@ import com.vaadin.flow.component.textfield.TextFieldVariant
 import com.vaadin.flow.data.value.ValueChangeMode
 import com.vaadin.flow.spring.annotation.SpringComponent
 import com.vaadin.flow.spring.annotation.UIScope
+import com.yuk.kinesisgui.gui.ModalDialog
 import com.yuk.kinesisgui.gui.SessionContext
 import com.yuk.kinesisgui.stream.RecordData
 import java.time.LocalDateTime
@@ -40,9 +41,13 @@ class EventGrid(
         val sourceColumn = addColumn(RecordData::source).setAutoWidth(true)
         val dataColumn = addColumn(RecordData::data).setAutoWidth(true)
 
-        addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT)
-
         setHeader(recordTimeColumn, timeColumn, shardIdColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
+
+        addItemClickListener {
+            ModalDialog(it.item.seq, it.item.raw).open()
+        }
+
+        addThemeVariants(GridVariant.LUMO_WRAP_CELL_CONTENT)
     }
 
     override fun onDetach(detachEvent: DetachEvent) {
