@@ -1,17 +1,10 @@
 package com.yuk.kinesisgui.stream
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 
 class RecordData(
-    val eventTime: String,
-    val eventType: String,
-    val source: String,
-    @JsonProperty("data")
-    data: Map<String, Any?>
+    val values: MutableMap<String, Any?>
 ) : Comparable<RecordData> {
-    @JsonIgnore
-    val data = data.toString()
     @JsonIgnore
     lateinit var recordTime: String
     @JsonIgnore
@@ -23,8 +16,12 @@ class RecordData(
     @JsonIgnore
     lateinit var raw: String
 
+    val data: String by lazy {
+        values.toString()
+    }
+
     override fun compareTo(other: RecordData): Int {
-        return eventTime.compareTo(other.eventTime)
+        return recordTime.compareTo(other.recordTime)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -33,8 +30,6 @@ class RecordData(
 
         other as RecordData
 
-        if (eventType != other.eventType) return false
-        if (data != other.data) return false
         if (seq != other.seq) return false
         if (shardId != other.shardId) return false
         if (partitionKey != other.partitionKey) return false
@@ -43,9 +38,7 @@ class RecordData(
     }
 
     override fun hashCode(): Int {
-        var result = eventType.hashCode()
-        result = 31 * result + data.hashCode()
-        result = 31 * result + seq.hashCode()
+        var result = seq.hashCode()
         result = 31 * result + shardId.hashCode()
         result = 31 * result + partitionKey.hashCode()
         return result

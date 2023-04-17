@@ -15,7 +15,7 @@ class ModalDialog(
         val dialogLayout = VerticalLayout()
         dialogLayout.add(content)
 
-        val cancelButton = Button("Cancel") { e -> this.close() }
+        val cancelButton = Button("Cancel") { _ -> this.close() }
         val copyButton = Button("Copy")
         val helper = ClipboardHelper(content, copyButton)
 

@@ -5,25 +5,17 @@ import java.util.Locale
 
 class EventGridSearchFilter {
     var shardId = ""
-    var partitionKey = ""
     var seq = ""
     var recordTime = ""
-    var eventTime = ""
-    var eventType = ""
-    var source = ""
     var data = ""
 
     fun filter(searchData: RecordData): Boolean {
         val matchShardId = matches(searchData.shardId, shardId)
-        val matchPartitionKey = matches(searchData.partitionKey, partitionKey)
         val matchSeq = matches(searchData.seq, seq)
         val matchRecordTime = matches(searchData.recordTime, recordTime)
-        val matchTime = matches(searchData.eventTime, eventTime)
-        val matchType = matches(searchData.eventType, eventType)
-        val matchSource = matches(searchData.source, source)
-        val matchData = multiMatches(searchData.data, data)
+        val multiMatchData = multiMatches(searchData.data, data)
 
-        return matchRecordTime && matchTime && matchType && matchSource && matchData && matchSeq && matchShardId && matchPartitionKey
+        return matchRecordTime && matchSeq && matchShardId && multiMatchData
     }
 
     private fun matches(value: String, searchTerm: String): Boolean {

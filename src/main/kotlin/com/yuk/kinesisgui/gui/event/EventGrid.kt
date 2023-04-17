@@ -33,15 +33,12 @@ class EventGrid(
         addClassNames("contact-grid")
         setSizeFull()
 
-        val recordTimeColumn = addColumn(RecordData::recordTime).setAutoWidth(true)
-        val timeColumn = addColumn(RecordData::eventTime).setAutoWidth(true)
-        val shardIdColumn = addColumn(RecordData::shardId).setAutoWidth(true)
-        val seqColumn = addColumn(RecordData::seq).setAutoWidth(true)
-        val typeColumn = addColumn(RecordData::eventType).setAutoWidth(true)
-        val sourceColumn = addColumn(RecordData::source).setAutoWidth(true)
+        val recordTimeColumn = addColumn(RecordData::recordTime).setWidth("200px")
+        val shardIdColumn = addColumn(RecordData::shardId).setWidth("200px")
+        val seqColumn = addColumn(RecordData::seq).setWidth("200px")
         val dataColumn = addColumn(RecordData::data).setAutoWidth(true)
 
-        setHeader(recordTimeColumn, timeColumn, shardIdColumn, seqColumn, typeColumn, sourceColumn, dataColumn)
+        setHeader(recordTimeColumn, shardIdColumn, seqColumn, dataColumn)
 
         addItemClickListener {
             ModalDialog(it.item.seq, it.item.raw).open()
@@ -82,11 +79,8 @@ class EventGrid(
 
     private fun setHeader(
         recordColumn: Column<RecordData>,
-        timeColumn: Column<RecordData>,
         shardIdColumn: Column<RecordData>,
         seqColumn: Column<RecordData>,
-        typeColumn: Column<RecordData>,
-        sourceColumn: Column<RecordData>,
         dataColumn: Column<RecordData>
     ) {
         headerRows.clear()
@@ -95,25 +89,14 @@ class EventGrid(
         headerRow.getCell(recordColumn).setComponent(
             createFilterHeader("RecordTime", filterChangeConsumer = eventGridSearchFilter::recordTime::set)
         )
-        headerRow.getCell(timeColumn).setComponent(
-            createFilterHeader("Time", filterChangeConsumer = eventGridSearchFilter::eventTime::set)
-        )
         headerRow.getCell(shardIdColumn).setComponent(
             createFilterHeader("shardId", filterChangeConsumer = eventGridSearchFilter::shardId::set)
         )
-
         headerRow.getCell(seqColumn).setComponent(
             createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set)
         )
-        headerRow.getCell(typeColumn)
-            .setComponent(
-                createFilterHeader("EventType", filterChangeConsumer = eventGridSearchFilter::eventType::set)
-            )
-        headerRow.getCell(sourceColumn).setComponent(
-            createFilterHeader("Source", filterChangeConsumer = eventGridSearchFilter::source::set)
-        )
         headerRow.getCell(dataColumn).setComponent(
-            createFilterHeader("Data", "500px", eventGridSearchFilter::data::set)
+            createFilterHeader("Data", filterChangeConsumer = eventGridSearchFilter::data::set)
         )
     }
 
