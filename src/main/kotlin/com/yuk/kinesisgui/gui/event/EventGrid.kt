@@ -27,6 +27,7 @@ class EventGrid(
     private val items = ConcurrentSkipListSet<RecordData>()
     private val maxSize = 30000
     private val eventGridSearchFilter = EventGridSearchFilter()
+    private var tail = false
     val gridRecordProcessor = GridRecordProcessor(this)
 
     init {
@@ -69,10 +70,21 @@ class EventGrid(
     fun addItems(items: Collection<RecordData>) = refreshUI {
         this.items.addAll(items)
         dropMaxItems()
+
+        ui.ifPresent {
+            it.access {
+                if (tail)
+                    this.scrollToEnd()
+            }
+        }
     }
 
     fun clean() = refreshUI {
         this.items.clear()
+    }
+
+    fun tail(value: Boolean) {
+        tail = value
     }
 
     fun currentItems() = items.filter(eventGridSearchFilter::filter)

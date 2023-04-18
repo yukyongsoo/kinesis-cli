@@ -20,6 +20,7 @@ class Toolbar(
 ) : HorizontalLayout() {
     val dateTimePicker = DateTimePicker("after Time")
     val checkBox = Checkbox("Trim Horizon")
+    val tailCheckBox = Checkbox("Tailing")
 
     init {
         addClassName("toolbar")
@@ -51,6 +52,12 @@ class Toolbar(
             }
         }
 
+        tailCheckBox.addValueChangeListener {
+            if (it.isFromClient) {
+                eventGrid.tail(tailCheckBox.value)
+            }
+        }
+
         val link = FileDownloadWrapper("event.csv") {
             val list = eventGrid.currentItems()
             ExcelUtil.createFile(list)
@@ -58,12 +65,13 @@ class Toolbar(
         }
         link.setText("Download CSV")
 
-        add(recordText, button, dateTimePicker, checkBox, link)
+        add(recordText, button, dateTimePicker, checkBox, tailCheckBox, link)
     }
 
     override fun onAttach(attachEvent: AttachEvent?) {
         super.onAttach(attachEvent)
         checkBox.value = false
         dateTimePicker.value = null
+        tailCheckBox.value = false
     }
 }
