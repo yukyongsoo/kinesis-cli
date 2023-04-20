@@ -54,6 +54,9 @@ class EventGrid(
     }
 
     fun addRecord(value: String) {
+        if (value.isBlank())
+            throw IllegalArgumentException("data can't be empty")
+
         sessionContext.addRecord(value)
     }
 
