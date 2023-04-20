@@ -1,5 +1,6 @@
 package com.yuk.kinesisgui
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder
 import com.amazonaws.services.kinesis.AmazonKinesis
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.vaadin.flow.component.page.AppShellConfigurator
 import com.vaadin.flow.component.page.Push
 import com.vaadin.flow.shared.communication.PushMode
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -33,18 +35,22 @@ class Config : AppShellConfigurator {
     }
 
     @Bean
-    fun getKinesisOperator(): AmazonKinesis {
+    fun getKinesisOperator(@Value("\${aws.profile:default}") profileName: String): AmazonKinesis {
         val builder = AmazonKinesisAsyncClientBuilder.standard()
+
         builder.region = region
+        builder.withCredentials(ProfileCredentialsProvider(profileName))
 
         return builder.build()
     }
 
     @Bean
-    fun cloudWatchOperator(): AmazonCloudWatch {
-        val cloudWatchClient =
-            AmazonCloudWatchClientBuilder.defaultClient()
+    fun cloudWatchOperator(@Value("\${aws.profile:default}") profileName: String): AmazonCloudWatch {
+        val builder = AmazonCloudWatchClientBuilder.standard()
 
-        return cloudWatchClient
+        builder.region = region
+        builder.withCredentials(ProfileCredentialsProvider(profileName))
+
+        return builder.build()
     }
 }
