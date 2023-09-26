@@ -21,7 +21,7 @@ class RecordData(
     }
 
     override fun compareTo(other: RecordData): Int {
-        return recordTime.compareTo(other.recordTime)
+        return seq.compareTo(other.seq)
     }
 
     override fun equals(other: Any?): Boolean {
