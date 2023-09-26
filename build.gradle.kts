@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.yuk"
-version = "0.3.0-SNAPSHOT"
+version = "0.3.2-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
