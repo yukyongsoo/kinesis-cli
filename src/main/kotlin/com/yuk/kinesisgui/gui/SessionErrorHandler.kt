@@ -20,10 +20,15 @@ class CustomErrorHandler : ErrorHandler {
     override fun error(errorEvent: ErrorEvent) {
         if (UI.getCurrent() != null) {
             UI.getCurrent().access {
-                val notification = Notification("An internal error has occurred. ${errorEvent.throwable.message}")
-                notification.addThemeVariants(NotificationVariant.LUMO_ERROR)
-                notification.open()
+                openNotification(errorEvent)
             }
         }
     }
+}
+
+fun openNotification(errorEvent: ErrorEvent) {
+    val notification = Notification("An internal error has occurred. ${errorEvent.throwable.message}")
+    notification.addThemeVariants(NotificationVariant.LUMO_ERROR)
+    notification.duration = 10000
+    notification.open()
 }
