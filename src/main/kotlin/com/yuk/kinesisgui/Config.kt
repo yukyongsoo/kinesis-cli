@@ -23,7 +23,7 @@ class Config : AppShellConfigurator {
 
     companion object {
         val objectMapper = JsonMapper.builder()
-            .addModule(KotlinModule())
+            .addModule(KotlinModule.Builder().build())
             .findAndAddModules()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .build()!!

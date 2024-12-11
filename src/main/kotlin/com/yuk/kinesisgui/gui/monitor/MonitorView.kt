@@ -14,35 +14,22 @@ import com.yuk.kinesisgui.metric.MetricDataSet
 class MonitorView(
     private val sessionContext: SessionContext
 ) : GridLayout(3, 10) {
-    val putRecordsTotal: Chart
-    val putRecordsByte: Chart
-    val putRecordLatency: Chart
-    val putRecordThrottled: Chart
-    val putRecordsSuccess: Chart
-    val putRecordsFailed: Chart
-    val incomingRecords: Chart
-    val subscribeToShardEventMillisBehindLatest: Chart
-    val subscribeToShardEventSuccess: Chart
-    val subscribeToShardRecord: Chart
-    val subscribeToShardRateExceeded: Chart
-    val writeProvisionedThroughputExceeded: Chart
-
+    val putRecordsTotal = Chart("총 생성 요청 레코드 수")
+    val putRecordsByte = Chart("생성 레코드 Byte 사이즈")
+    val putRecordLatency = Chart("레코드 생성 응답속도(Ms)")
+    val putRecordThrottled = Chart("지연이 발생한 레코드 수")
+    val putRecordsSuccess = Chart("성공한 생성 레코드 수")
+    val putRecordsFailed = Chart("실패한 생성 레코드 수")
+    val incomingRecords = Chart("인입된 레코드 수")
+    val subscribeToShardEventMillisBehindLatest = Chart("이벤트 구독 지연(Ms)")
+    val subscribeToShardEventSuccess = Chart("이벤트 구독 성공")
+    val subscribeToShardRecord = Chart("이벤트 구독 레코드 수")
+    val subscribeToShardRateExceeded = Chart("이벤트 구독 요청 초과")
+    val writeProvisionedThroughputExceeded = Chart("생성 제한량 초과")
+    
     init {
         setSizeFull()
         setMargin(true)
-
-        putRecordsTotal = Chart("총 생성 요청 레코드 수")
-        putRecordsByte = Chart("생성 레코드 Byte 사이즈")
-        putRecordLatency = Chart("레코드 생성 응답속도(Ms)")
-        putRecordThrottled = Chart("지연이 발생한 레코드 수")
-        putRecordsSuccess = Chart("성공한 생성 레코드 수")
-        putRecordsFailed = Chart("실패한 생성 레코드 수")
-        incomingRecords = Chart("인입된 레코드 수")
-        subscribeToShardEventMillisBehindLatest = Chart("이벤트 구독 지연(Ms)")
-        subscribeToShardEventSuccess = Chart("이벤트 구독 성공")
-        subscribeToShardRecord = Chart("이벤트 구독 레코드 수")
-        subscribeToShardRateExceeded = Chart("이벤트 구독 요청 초과")
-        writeProvisionedThroughputExceeded = Chart("생성 제한량 초과")
 
         addComponent(putRecordsTotal)
         addComponent(putRecordsByte)
