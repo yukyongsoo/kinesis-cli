@@ -22,11 +22,12 @@ class Config : AppShellConfigurator {
     private val region = "ap-northeast-2"
 
     companion object {
-        val objectMapper = JsonMapper.builder()
-            .addModule(KotlinModule.Builder().build())
-            .findAndAddModules()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .build()!!
+        val objectMapper =
+            JsonMapper.builder()
+                .addModule(KotlinModule.Builder().build())
+                .findAndAddModules()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build()!!
     }
 
     @Bean
@@ -35,7 +36,9 @@ class Config : AppShellConfigurator {
     }
 
     @Bean
-    fun getKinesisOperator(@Value("\${aws.profile:default}") profileName: String): AmazonKinesis {
+    fun getKinesisOperator(
+        @Value("\${aws.profile:default}") profileName: String,
+    ): AmazonKinesis {
         val builder = AmazonKinesisAsyncClientBuilder.standard()
 
         builder.region = region
@@ -45,7 +48,9 @@ class Config : AppShellConfigurator {
     }
 
     @Bean
-    fun cloudWatchOperator(@Value("\${aws.profile:default}") profileName: String): AmazonCloudWatch {
+    fun cloudWatchOperator(
+        @Value("\${aws.profile:default}") profileName: String,
+    ): AmazonCloudWatch {
         val builder = AmazonCloudWatchClientBuilder.standard()
 
         builder.region = region

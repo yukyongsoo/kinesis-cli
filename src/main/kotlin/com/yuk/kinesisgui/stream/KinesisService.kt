@@ -12,20 +12,19 @@ import java.util.Date
 
 @Service
 class KinesisService(
-    private val kinesisClient: AmazonKinesis
+    private val kinesisClient: AmazonKinesis,
 ) {
-    fun getStreamList(
-        word: String = ""
-    ): List<String> {
+    fun getStreamList(word: String = ""): List<String> {
         val list = kinesisClient.listStreams()
 
-        return if (word.isNotEmpty()) list.streamNames.filter { it.contains(word) }
-        else list.streamNames
+        return if (word.isNotEmpty()) {
+            list.streamNames.filter { it.contains(word) }
+        } else {
+            list.streamNames
+        }
     }
 
-    fun getShardIds(
-        streamName: String
-    ): List<String> {
+    fun getShardIds(streamName: String): List<String> {
         val request = ListShardsRequest()
         request.streamName = streamName
 
@@ -38,7 +37,7 @@ class KinesisService(
         streamName: String,
         shardId: String,
         shardIteratorType: String = "LATEST",
-        startDate: Date = Date()
+        startDate: Date = Date(),
     ): String {
         val shardIteratorRequest = GetShardIteratorRequest()
         shardIteratorRequest.streamName = streamName
@@ -57,7 +56,7 @@ class KinesisService(
 
     fun getRecords(
         shardIterator: String,
-        limit: Int
+        limit: Int,
     ): GetRecordsResult {
         val getRecordsRequest = GetRecordsRequest()
         getRecordsRequest.shardIterator = shardIterator
@@ -72,9 +71,10 @@ class KinesisService(
     ): String {
         val putRecordRequest = PutRecordRequest()
         putRecordRequest.streamName = streamName
-        putRecordRequest.data = ByteBuffer.wrap(
-            data.toByteArray()
-        )
+        putRecordRequest.data =
+            ByteBuffer.wrap(
+                data.toByteArray(),
+            )
         putRecordRequest.partitionKey = "0"
 
         val putRecordResult = kinesisClient.putRecord(putRecordRequest)

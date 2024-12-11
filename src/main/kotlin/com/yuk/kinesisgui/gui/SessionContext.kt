@@ -19,6 +19,7 @@ class SessionContext(
 ) {
     private var currentStreamName = ""
     private val streamTracker = StreamTracker(kinesisService)
+
     @Autowired
     @Lazy
     private lateinit var eventGrid: EventGrid
@@ -55,6 +56,7 @@ class SessionContext(
     fun stopTracking() {
         streamTracker.stop()
     }
+
     fun addRecord(record: String) {
         kinesisService.addRecord(currentStreamName, record)
     }

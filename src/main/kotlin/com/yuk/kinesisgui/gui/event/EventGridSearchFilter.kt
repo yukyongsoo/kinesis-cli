@@ -18,12 +18,18 @@ class EventGridSearchFilter {
         return matchRecordTime && matchSeq && matchShardId && multiMatchData
     }
 
-    private fun matches(value: String, searchTerm: String): Boolean {
+    private fun matches(
+        value: String,
+        searchTerm: String,
+    ): Boolean {
         return searchTerm.isEmpty() ||
             value.lowercase(Locale.getDefault()).contains(searchTerm.lowercase(Locale.getDefault()))
     }
 
-    private fun multiMatches(value: String, searchTerm: String): Boolean {
+    private fun multiMatches(
+        value: String,
+        searchTerm: String,
+    ): Boolean {
         return when {
             searchTerm.contains("&") -> {
                 val andTerms = searchTerm.split("&").filter { it.isNotEmpty() }

@@ -7,13 +7,16 @@ import java.io.FileInputStream
 import java.io.FileWriter
 
 object ExcelUtil {
-    private val csvMapper = CsvMapper().apply {
-        disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
-    }
-    private var csvSchema = csvMapper.schemaFor(RecordData::class.java)
-        .withHeader()
-        .withColumnSeparator('\t')
-        .withLineSeparator("\t\n")
+    private val csvMapper =
+        CsvMapper.csvBuilder()
+            .disable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .build()
+
+    private var csvSchema =
+        csvMapper.schemaFor(RecordData::class.java)
+            .withHeader()
+            .withColumnSeparator('\t')
+            .withLineSeparator("\t\n")
 
     fun createFile(data: Collection<RecordData>) {
         val writer = csvMapper.writer(csvSchema)

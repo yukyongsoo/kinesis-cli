@@ -12,7 +12,7 @@ import com.yuk.kinesisgui.metric.MetricDataSet
 @UIScope
 @SpringComponent
 class MonitorView(
-    private val sessionContext: SessionContext
+    private val sessionContext: SessionContext,
 ) : GridLayout(3, 10) {
     val putRecordsTotal = Chart("총 생성 요청 레코드 수")
     val putRecordsByte = Chart("생성 레코드 Byte 사이즈")
@@ -26,7 +26,7 @@ class MonitorView(
     val subscribeToShardRecord = Chart("이벤트 구독 레코드 수")
     val subscribeToShardRateExceeded = Chart("이벤트 구독 요청 초과")
     val writeProvisionedThroughputExceeded = Chart("생성 제한량 초과")
-    
+
     init {
         setSizeFull()
         setMargin(true)

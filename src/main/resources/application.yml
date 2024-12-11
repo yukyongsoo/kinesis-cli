@@ -1,2 +1,2 @@
 vaadin:
-  whitelisted-packages: com.vaadin,org.vaadin,com.storedobject
+  allowed-packages: com.vaadin,org.vaadin,com.storedobject, com.hilerio.ace

@@ -2,6 +2,7 @@
   "name": "no-name",
   "license": "UNLICENSED",
   "dependencies": {
+    "@f0rce/ace-widget": "1.0.2",
     "@polymer/polymer": "3.5.2",
     "@vaadin/bundles": "24.5.5",
     "@vaadin/common-frontend": "0.0.19",
@@ -41,8 +42,30 @@
     "workbox-core": "7.3.0",
     "workbox-precaching": "7.3.0"
   },
+  "overrides": {
+    "@vaadin/bundles": "$@vaadin/bundles",
+    "@vaadin/polymer-legacy-adapter": "$@vaadin/polymer-legacy-adapter",
+    "@vaadin/vaadin-development-mode-detector": "$@vaadin/vaadin-development-mode-detector",
+    "@vaadin/vaadin-usage-statistics": "$@vaadin/vaadin-usage-statistics",
+    "@vaadin/react-components": "$@vaadin/react-components",
+    "@vaadin/common-frontend": "$@vaadin/common-frontend",
+    "react-dom": "$react-dom",
+    "construct-style-sheets-polyfill": "$construct-style-sheets-polyfill",
+    "react-router-dom": "$react-router-dom",
+    "lit": "$lit",
+    "@polymer/polymer": "$@polymer/polymer",
+    "react": "$react",
+    "date-fns": "$date-fns",
+    "echarts": "$echarts",
+    "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
+    "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
+    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
+    "@f0rce/ace-widget": "$@f0rce/ace-widget"
+  },
+  "type": "module",
   "vaadin": {
     "dependencies": {
+      "@f0rce/ace-widget": "1.0.2",
       "@polymer/polymer": "3.5.2",
       "@vaadin/bundles": "24.5.5",
       "@vaadin/common-frontend": "0.0.19",
@@ -82,26 +105,6 @@
       "workbox-core": "7.3.0",
       "workbox-precaching": "7.3.0"
     },
-    "hash": "8e7059a143f0ae072e4bd0d55ef12afbded6c58a7b73c67b262758aed82e415d"
-  },
-  "overrides": {
-    "@vaadin/bundles": "$@vaadin/bundles",
-    "@vaadin/polymer-legacy-adapter": "$@vaadin/polymer-legacy-adapter",
-    "@vaadin/vaadin-development-mode-detector": "$@vaadin/vaadin-development-mode-detector",
-    "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
-    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
-    "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
-    "@vaadin/vaadin-usage-statistics": "$@vaadin/vaadin-usage-statistics",
-    "@vaadin/common-frontend": "$@vaadin/common-frontend",
-    "construct-style-sheets-polyfill": "$construct-style-sheets-polyfill",
-    "lit": "$lit",
-    "@polymer/polymer": "$@polymer/polymer",
-    "date-fns": "$date-fns",
-    "echarts": "$echarts",
-    "@vaadin/react-components": "$@vaadin/react-components",
-    "react-dom": "$react-dom",
-    "react-router-dom": "$react-router-dom",
-    "react": "$react"
-  },
-  "type": "module"
+    "hash": "68407a7e9a506385cf324de90629e25cdae32886e662ff8356bec66fa198d72a"
+  }
 }

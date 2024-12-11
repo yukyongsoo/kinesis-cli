@@ -4,7 +4,7 @@ import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.DetachEvent
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant
-import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.html.NativeLabel
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant
@@ -22,7 +22,7 @@ import java.util.function.Consumer
 @SpringComponent
 class EventGrid(
     clazz: Class<RecordData> = RecordData::class.java,
-    private val sessionContext: SessionContext
+    private val sessionContext: SessionContext,
 ) : Grid<RecordData>(clazz, false) {
     private val items = ConcurrentSkipListSet<RecordData>()
     private val maxSize = 30000
@@ -54,8 +54,9 @@ class EventGrid(
     }
 
     fun addRecord(value: String) {
-        if (value.isBlank())
+        if (value.isBlank()) {
             throw IllegalArgumentException("data can't be empty")
+        }
 
         sessionContext.addRecord(value)
     }
@@ -70,21 +71,24 @@ class EventGrid(
         sessionContext.afterTime(value)
     }
 
-    fun addItems(items: Collection<RecordData>) = refreshUI {
-        this.items.addAll(items)
-        dropMaxItems()
+    fun addItems(items: Collection<RecordData>) =
+        refreshUI {
+            this.items.addAll(items)
+            dropMaxItems()
 
-        ui.ifPresent {
-            it.access {
-                if (tail)
-                    this.scrollToEnd()
+            ui.ifPresent {
+                it.access {
+                    if (tail) {
+                        this.scrollToEnd()
+                    }
+                }
             }
         }
-    }
 
-    fun clean() = refreshUI {
-        this.items.clear()
-    }
+    fun clean() =
+        refreshUI {
+            this.items.clear()
+        }
 
     fun tail(value: Boolean) {
         tail = value
@@ -96,62 +100,67 @@ class EventGrid(
         recordColumn: Column<RecordData>,
         shardIdColumn: Column<RecordData>,
         seqColumn: Column<RecordData>,
-        dataColumn: Column<RecordData>
+        dataColumn: Column<RecordData>,
     ) {
         headerRows.clear()
         val headerRow = appendHeaderRow()
 
         headerRow.getCell(recordColumn).setComponent(
-            createFilterHeader("RecordTime", filterChangeConsumer = eventGridSearchFilter::recordTime::set)
+            createFilterHeader("RecordTime", filterChangeConsumer = eventGridSearchFilter::recordTime::set),
         )
         headerRow.getCell(shardIdColumn).setComponent(
-            createFilterHeader("shardId", filterChangeConsumer = eventGridSearchFilter::shardId::set)
+            createFilterHeader("shardId", filterChangeConsumer = eventGridSearchFilter::shardId::set),
         )
         headerRow.getCell(seqColumn).setComponent(
-            createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set)
+            createFilterHeader("Seq", filterChangeConsumer = eventGridSearchFilter::seq::set),
         )
         headerRow.getCell(dataColumn).setComponent(
-            createFilterHeader("Data", filterChangeConsumer = eventGridSearchFilter::data::set)
+            createFilterHeader("Data", filterChangeConsumer = eventGridSearchFilter::data::set),
         )
     }
 
     private fun createFilterHeader(
         labelText: String,
         minWidth: String = "",
-        filterChangeConsumer: Consumer<String>
+        filterChangeConsumer: Consumer<String>,
     ): Component {
-        val label = Label(labelText).apply {
-            style["padding-top"] = "var(--lumo-space-m)"
-            style["font-size"] = "var(--lumo-font-size-xs)"
-        }
+        val label =
+            NativeLabel(labelText).apply {
+                style["padding-top"] = "var(--lumo-space-m)"
+                style["font-size"] = "var(--lumo-font-size-xs)"
+            }
 
-        val textField = TextField().apply {
-            valueChangeMode = ValueChangeMode.EAGER
-            isClearButtonVisible = true
-            addThemeVariants(TextFieldVariant.LUMO_SMALL)
-            setWidthFull()
-            if (minWidth.isNotBlank())
-                this.minWidth = minWidth
-            style["max-width"] = "100%"
-        }
+        val textField =
+            TextField().apply {
+                valueChangeMode = ValueChangeMode.EAGER
+                isClearButtonVisible = true
+                addThemeVariants(TextFieldVariant.LUMO_SMALL)
+                setWidthFull()
+                if (minWidth.isNotBlank()) {
+                    this.minWidth = minWidth
+                }
+                style["max-width"] = "100%"
+            }
         textField.addValueChangeListener { e ->
             filterChangeConsumer.accept(e.value)
             refreshUI {}
         }
 
-        val layout = VerticalLayout(label, textField).apply {
-            themeList.clear()
-            themeList.add("spacing-xs")
-        }
+        val layout =
+            VerticalLayout(label, textField).apply {
+                themeList.clear()
+                themeList.add("spacing-xs")
+            }
 
         return layout
     }
 
-    private fun dropMaxItems() = refreshUI {
-        while (items.size > maxSize) {
-            items.remove(items.first())
+    private fun dropMaxItems() =
+        refreshUI {
+            while (items.size > maxSize) {
+                items.remove(items.first())
+            }
         }
-    }
 
     private fun refreshUI(block: () -> Unit) {
         block()

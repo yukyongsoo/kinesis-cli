@@ -11,7 +11,7 @@ import com.yuk.kinesisgui.gui.SessionContext
 @SpringComponent
 class StreamTabs(
     private val sessionContext: SessionContext,
-    private val mainView: MainView
+    private val mainView: MainView,
 ) : Tabs() {
     init {
         orientation = Tabs.Orientation.VERTICAL
@@ -30,13 +30,15 @@ class StreamTabs(
     }
 
     fun filterStream(value: String) {
-        val hideTarget = this.children.filter {
-            it is Tab && it.label.contains(value).not()
-        }
+        val hideTarget =
+            this.children.filter {
+                it is Tab && it.label.contains(value).not()
+            }
 
-        val showTarget = this.children.filter {
-            it is Tab && it.label.contains(value)
-        }
+        val showTarget =
+            this.children.filter {
+                it is Tab && it.label.contains(value)
+            }
 
         hideTarget.forEach { it.isVisible = false }
         showTarget.forEach { it.isVisible = true }

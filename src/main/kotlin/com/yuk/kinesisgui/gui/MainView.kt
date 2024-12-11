@@ -12,7 +12,7 @@ import com.yuk.kinesisgui.gui.monitor.MonitorView
 @SpringComponent
 class MainView(
     private val eventView: EventView,
-    private val monitorView: MonitorView
+    private val monitorView: MonitorView,
 ) : VerticalLayout() {
     private lateinit var content: VerticalLayout
     private lateinit var eventViewTab: Tab

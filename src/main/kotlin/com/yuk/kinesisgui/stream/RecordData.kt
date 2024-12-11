@@ -3,16 +3,20 @@ package com.yuk.kinesisgui.stream
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 class RecordData(
-    val values: MutableMap<String, Any?>
+    val values: MutableMap<String, Any?>,
 ) : Comparable<RecordData> {
     @JsonIgnore
     lateinit var recordTime: String
+
     @JsonIgnore
     lateinit var seq: String
+
     @JsonIgnore
     lateinit var shardId: String
+
     @JsonIgnore
     lateinit var partitionKey: String
+
     @JsonIgnore
     lateinit var raw: String
 

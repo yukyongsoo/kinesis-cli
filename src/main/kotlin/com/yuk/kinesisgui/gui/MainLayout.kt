@@ -11,7 +11,7 @@ import com.yuk.kinesisgui.gui.stream.StreamListView
 @PageTitle("Kinesis GUI By Vaadin")
 class MainLayout(
     private val mainView: MainView,
-    private val streamListView: StreamListView
+    private val streamListView: StreamListView,
 ) : AppLayout() {
     init {
         val title = H1("Event Viewer")

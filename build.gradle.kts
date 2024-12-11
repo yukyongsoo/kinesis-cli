@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.4.0"
     id("io.spring.dependency-management") version "1.1.6"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("com.vaadin") version "24.5.8"
     kotlin("jvm") version "2.0.0"
     kotlin("plugin.spring") version "2.0.0"
 }
 
 group = "com.yuk"
-version = "0.3.3-SNAPSHOT"
+version = "0.3.4-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -33,6 +33,7 @@ dependencies {
     implementation("org.vaadin.olli:clipboardhelper:2.0.0")
     implementation("com.storedobject.chart:so-charts:3.0.0")
     implementation("org.vaadin.addons.componentfactory:vcf-gridlayout:1.0.1")
+    implementation("com.hilerio:ace-widget:2.0.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")

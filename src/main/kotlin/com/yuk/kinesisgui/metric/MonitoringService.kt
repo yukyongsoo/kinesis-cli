@@ -15,29 +15,34 @@ import java.util.UUID
 
 @Service
 class MonitoringService(
-    private val client: AmazonCloudWatch
+    private val client: AmazonCloudWatch,
 ) {
     fun getStreamMetricList(streamName: String): List<Metric> {
         var nextToken: String? = null
 
-        val metricList = buildList<Metric> {
-            do {
-                val listMetricsRequest = ListMetricsRequest().withNamespace("AWS/Kinesis")
-                    .withDimensions(DimensionFilter().withName("StreamName").withValue(streamName))
-                    .withNextToken(nextToken)
+        val metricList =
+            buildList<Metric> {
+                do {
+                    val listMetricsRequest =
+                        ListMetricsRequest().withNamespace("AWS/Kinesis")
+                            .withDimensions(DimensionFilter().withName("StreamName").withValue(streamName))
+                            .withNextToken(nextToken)
 
-                val listMetricsResult = client.listMetrics(listMetricsRequest)
+                    val listMetricsResult = client.listMetrics(listMetricsRequest)
 
-                addAll(listMetricsResult.metrics)
+                    addAll(listMetricsResult.metrics)
 
-                nextToken = listMetricsResult.nextToken
-            } while (nextToken?.isNotBlank() == true)
-        }
+                    nextToken = listMetricsResult.nextToken
+                } while (nextToken?.isNotBlank() == true)
+            }
 
         return metricList
     }
 
-    fun getMetric(metric: Metric, startDateTime: LocalDateTime): MutableList<MetricDataResult> {
+    fun getMetric(
+        metric: Metric,
+        startDateTime: LocalDateTime,
+    ): MutableList<MetricDataResult> {
         val metricStat = makeMetricStat(metric)
 
         val query = makeMetricDataQuery(metricStat)
@@ -46,10 +51,11 @@ class MonitoringService(
         val startTimeInstant = Timestamp.valueOf(startDateTime)
         val endTimeInstant = Timestamp.valueOf(currentDatetime)
 
-        val request = GetMetricDataRequest()
-            .withMetricDataQueries(query)
-            .withStartTime(startTimeInstant)
-            .withEndTime(endTimeInstant)
+        val request =
+            GetMetricDataRequest()
+                .withMetricDataQueries(query)
+                .withStartTime(startTimeInstant)
+                .withEndTime(endTimeInstant)
 
         val response = client.getMetricData(request)
 

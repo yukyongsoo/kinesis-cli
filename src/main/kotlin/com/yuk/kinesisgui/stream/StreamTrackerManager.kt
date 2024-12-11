@@ -4,11 +4,15 @@ import java.time.LocalDateTime
 
 @Deprecated("", level = DeprecationLevel.HIDDEN)
 class StreamTrackerManager(
-    private val kinesisService: KinesisService
+    private val kinesisService: KinesisService,
 ) {
     private val streamTrackerMap = mutableMapOf<String, StreamTracker>()
 
-    fun startTracking(streamName: String, trimHorizon: Boolean = false, afterTime: LocalDateTime? = null) {
+    fun startTracking(
+        streamName: String,
+        trimHorizon: Boolean = false,
+        afterTime: LocalDateTime? = null,
+    ) {
         if (streamTrackerMap.containsKey(streamName)) {
             throw IllegalStateException("Stream $streamName is already tracked")
         }
@@ -20,8 +24,9 @@ class StreamTrackerManager(
     }
 
     fun stopTracking(streamName: String) {
-        val streamTracker = streamTrackerMap.remove(streamName)
-            ?: throw IllegalStateException("Stream $streamName is not tracked")
+        val streamTracker =
+            streamTrackerMap.remove(streamName)
+                ?: throw IllegalStateException("Stream $streamName is not tracked")
 
         streamTracker.stop()
     }
@@ -32,7 +37,7 @@ class StreamTrackerManager(
 
     fun addRecordProcessor(
         streamName: String,
-        recordProcessor: RecordProcessor
+        recordProcessor: RecordProcessor,
     ) {
         if (isTracked(streamName).not()) {
             throw IllegalStateException("Stream $streamName is not tracked")
@@ -43,7 +48,7 @@ class StreamTrackerManager(
 
     fun removeRecordProcessor(
         streamName: String,
-        recordProcessor: RecordProcessor
+        recordProcessor: RecordProcessor,
     ) {
         val stopped = streamTrackerMap[streamName]?.removeRecordProcessor(recordProcessor)
 

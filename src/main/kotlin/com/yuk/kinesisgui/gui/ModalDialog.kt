@@ -7,7 +7,7 @@ import org.vaadin.olli.ClipboardHelper
 
 class ModalDialog(
     private val title: String,
-    private var content: String
+    private var content: String,
 ) : Dialog() {
     init {
         headerTitle = title
@@ -16,7 +16,8 @@ class ModalDialog(
         dialogLayout.add(content)
 
         val cancelButton = Button("Cancel") { _ -> this.close() }
-        val copyButton = Button("Copy")
+
+        val copyButton = Button("Copy") { _ -> openNotification("clipboard Copied") }
         val helper = ClipboardHelper(content, copyButton)
 
         footer.add(helper)

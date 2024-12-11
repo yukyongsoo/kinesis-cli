@@ -9,7 +9,7 @@ import com.vaadin.flow.spring.annotation.UIScope
 @UIScope
 @SpringComponent
 class StreamListView(
-    private val streamTabs: StreamTabs
+    private val streamTabs: StreamTabs,
 ) : VerticalLayout() {
     init {
         val searchField = TextField()

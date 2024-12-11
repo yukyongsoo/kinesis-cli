@@ -14,7 +14,7 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 class StreamTracker(
-    private val kinesisService: KinesisService
+    private val kinesisService: KinesisService,
 ) {
     private lateinit var streamName: String
     private val shardTrackerMap = mutableMapOf<String, ShardTracker>()
@@ -23,7 +23,7 @@ class StreamTracker(
     fun start(
         streamName: String,
         trimHorizon: Boolean,
-        afterTime: LocalDateTime?
+        afterTime: LocalDateTime?,
     ) {
         this.streamName = streamName
         setShardTracker(streamName, trimHorizon, afterTime)
@@ -41,15 +41,16 @@ class StreamTracker(
     private fun setShardTracker(
         streamName: String,
         trimHorizon: Boolean,
-        afterTime: LocalDateTime?
+        afterTime: LocalDateTime?,
     ) {
         val ids = kinesisService.getShardIds(this.streamName)
 
-        val shardIteratorType = when {
-            trimHorizon -> "TRIM_HORIZON"
-            afterTime != null -> "AT_TIMESTAMP"
-            else -> "LATEST"
-        }
+        val shardIteratorType =
+            when {
+                trimHorizon -> "TRIM_HORIZON"
+                afterTime != null -> "AT_TIMESTAMP"
+                else -> "LATEST"
+            }
 
         val searchDate = Timestamp.valueOf(afterTime ?: LocalDateTime.now())
 
@@ -64,20 +65,22 @@ class StreamTracker(
 
     private fun registerRecordProcessor() {
         shardTrackerMap.forEach {
-            (_, shardTracker) ->
+                (_, shardTracker) ->
             shardTracker.setRecordProcessors(recordProcessors)
         }
     }
 
     fun addRecordProcessor(recordProcessor: RecordProcessor) {
-        if (shardTrackerMap.isEmpty())
+        if (shardTrackerMap.isEmpty()) {
             throw IllegalStateException("tracker is not started")
+        }
 
-        if (recordProcessors.contains(recordProcessor).not())
+        if (recordProcessors.contains(recordProcessor).not()) {
             recordProcessors.add(recordProcessor)
+        }
 
         shardTrackerMap.forEach {
-            (_, shardTracker) ->
+                (_, shardTracker) ->
             shardTracker.setRecordProcessors(recordProcessors)
         }
     }
@@ -92,7 +95,7 @@ class StreamTracker(
             true
         } else {
             shardTrackerMap.forEach {
-                (_, shardTracker) ->
+                    (_, shardTracker) ->
                 shardTracker.setRecordProcessors(recordProcessors)
             }
             false
@@ -103,7 +106,7 @@ class StreamTracker(
         private val kinesisService: KinesisService,
         private val stream: String,
         private var iterator: String,
-        private var shardId: String
+        private var shardId: String,
     ) {
         private var isRunning = false
         private var recordProcessors = mutableListOf<RecordProcessor>()
@@ -116,8 +119,9 @@ class StreamTracker(
         fun stop() {
             runBlocking {
                 isRunning = false
-                if (this@ShardTracker::currentJob.isInitialized)
+                if (this@ShardTracker::currentJob.isInitialized) {
                     currentJob.cancelAndJoin()
+                }
             }
         }
 
@@ -129,47 +133,50 @@ class StreamTracker(
         }
 
         private fun getRecords() {
-            currentJob = CoroutineScope(Dispatchers.IO).launch {
-                delay(5000)
+            currentJob =
+                CoroutineScope(Dispatchers.IO).launch {
+                    delay(5000)
 
-                while (isRunning) {
-                    delay(1000)
+                    while (isRunning) {
+                        delay(1000)
 
-                    val result = kinesisService.getRecords(iterator, 1000)
-                    val deaggregationRecords = UserRecord.deaggregate(result.records)
+                        val result = kinesisService.getRecords(iterator, 1000)
+                        val deaggregationRecords = UserRecord.deaggregate(result.records)
 
-                    val records = deaggregationRecords.mapNotNullTo(mutableSetOf()) { record ->
-                        try {
-                            val raw = String(record.data.array())
-                            val values = Config.objectMapper.readValue<MutableMap<String, Any?>>(raw)
+                        val records =
+                            deaggregationRecords.mapNotNullTo(mutableSetOf()) { record ->
+                                try {
+                                    val raw = String(record.data.array())
+                                    val values = Config.objectMapper.readValue<MutableMap<String, Any?>>(raw)
 
-                            RecordData(values).apply {
-                                seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
-                                recordTime = record.approximateArrivalTimestamp.toString()
-                                this.shardId = this@ShardTracker.shardId
-                                partitionKey = record.partitionKey
-                                this.raw = raw
+                                    RecordData(values).apply {
+                                        seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
+                                        recordTime = record.approximateArrivalTimestamp.toString()
+                                        this.shardId = this@ShardTracker.shardId
+                                        partitionKey = record.partitionKey
+                                        this.raw = raw
+                                    }
+                                } catch (e: Exception) {
+                                    println("seq: ${record.sequenceNumber} message: ${e.message}")
+                                    return@mapNotNullTo null
+                                }
                             }
-                        } catch (e: Exception) {
-                            println("seq: ${record.sequenceNumber} message: ${e.message}")
-                            return@mapNotNullTo null
+
+                        if (recordProcessors.isEmpty()) {
+                            println("recordProcessors is empty")
+                        }
+
+                        recordProcessors.forEach {
+                            it.process(records)
+                        }
+
+                        if (result.nextShardIterator == null) {
+                            isRunning = false
+                        } else {
+                            iterator = result.nextShardIterator
                         }
                     }
-
-                    if (recordProcessors.isEmpty())
-                        println("recordProcessors is empty")
-
-                    recordProcessors.forEach {
-                        it.process(records)
-                    }
-
-                    if (result.nextShardIterator == null) {
-                        isRunning = false
-                    } else {
-                        iterator = result.nextShardIterator
-                    }
                 }
-            }
         }
     }
 }
