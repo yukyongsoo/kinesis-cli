@@ -6,8 +6,13 @@ Amazon kinesis 의 이벤트를 추적하고 관련 기능을 제공하는 web a
 
 ## requirement
 
-1. java 11 or higher
-2. Node.js 16.14 or higher
+1. java 17 or higher
+
+## deveploment requirement
+1. java 17 or higher
+2. Node.js 18 or higher
+3. gradle 8.5 or higher
+4. spring 3.0 or higher
 
 ## feature
 
@@ -29,3 +34,10 @@ https://github.com/yukyongsoo/kinesis-cli/wiki
 we use github issue page 
 
 https://github.com/yukyongsoo/kinesis-cli/issues
+
+## Browser Compatibility
+
+1. Chrome: Evergreen
+2. Firefox: Evergreen, ESR
+3. Safari: 15 or later
+4. Edge: Evergreen, Chromium
