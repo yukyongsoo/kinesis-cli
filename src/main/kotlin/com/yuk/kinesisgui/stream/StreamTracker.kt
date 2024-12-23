@@ -167,7 +167,7 @@ class StreamTracker(
                         }
 
                         recordProcessors.forEach {
-                            it.process(records)
+                            it.process(records, iterator)
                         }
 
                         if (result.nextShardIterator == null) {

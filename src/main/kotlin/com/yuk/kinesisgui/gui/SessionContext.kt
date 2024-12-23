@@ -3,6 +3,7 @@ package com.yuk.kinesisgui.gui
 import com.vaadin.flow.spring.annotation.SpringComponent
 import com.vaadin.flow.spring.annotation.UIScope
 import com.yuk.kinesisgui.gui.event.EventGrid
+import com.yuk.kinesisgui.gui.event.Toolbar
 import com.yuk.kinesisgui.metric.MetricClassifier
 import com.yuk.kinesisgui.metric.MetricDataSet
 import com.yuk.kinesisgui.stream.KinesisService
@@ -24,6 +25,10 @@ class SessionContext(
     @Lazy
     private lateinit var eventGrid: EventGrid
 
+    @Autowired
+    @Lazy
+    private lateinit var toolbar: Toolbar
+
     fun changeCurrentStreamName(streamName: String) {
         currentStreamName = streamName
         stopTracking()
@@ -41,6 +46,7 @@ class SessionContext(
     fun startTracking() {
         streamTracker.start(currentStreamName, false, null)
         streamTracker.addRecordProcessor(eventGrid.gridRecordProcessor)
+        streamTracker.addRecordProcessor(toolbar.toolbarRecordProcessor)
     }
 
     fun trimHorizon(value: Boolean) {

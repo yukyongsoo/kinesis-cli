@@ -6,10 +6,13 @@ import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.datetimepicker.DateTimePicker
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.spring.annotation.SpringComponent
 import com.vaadin.flow.spring.annotation.UIScope
 import com.yuk.kinesisgui.ExcelUtil
 import org.vaadin.olli.FileDownloadWrapper
+import org.vaadin.spinkit.Spinner
+import org.vaadin.spinkit.SpinnerType
 
 @UIScope
 @SpringComponent
@@ -20,6 +23,9 @@ class Toolbar(
     val checkBox = Checkbox("Trim Horizon")
     val tailCheckBox = Checkbox("Tailing")
     val recordAdder = RecordAdder(eventGrid)
+    val spinner = Spinner(SpinnerType.FOLDING_CUBE)
+    val tooltip = Tooltip.forComponent(spinner).withPosition(Tooltip.TooltipPosition.TOP_START)
+    val toolbarRecordProcessor = ToolbarRecordProcessor(this)
 
     init {
         addClassName("toolbar")
@@ -58,7 +64,7 @@ class Toolbar(
             }
         link.setText("Download CSV")
 
-        add(button, dateTimePicker, checkBox, tailCheckBox, link)
+        add(spinner, button, dateTimePicker, checkBox, tailCheckBox, link)
     }
 
     override fun onAttach(attachEvent: AttachEvent?) {
@@ -66,5 +72,14 @@ class Toolbar(
         checkBox.value = false
         dateTimePicker.value = null
         tailCheckBox.value = false
+    }
+
+    fun setSpinnerTooltip(iterator: String) {
+        ui.ifPresent {
+            it.access {
+                tooltip.text = "current iterator: $iterator"
+                it.push()
+            }
+        }
     }
 }

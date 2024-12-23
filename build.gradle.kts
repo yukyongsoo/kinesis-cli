@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.yuk"
-version = "0.3.4-SNAPSHOT"
+version = "0.3.5-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -34,6 +34,7 @@ dependencies {
     implementation("com.storedobject.chart:so-charts:3.0.0")
     implementation("org.vaadin.addons.componentfactory:vcf-gridlayout:1.0.1")
     implementation("com.hilerio:ace-widget:2.0.0")
+    implementation("org.vaadin:spinkit:3.0.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")
