@@ -1,8 +1,8 @@
 package com.yuk.kinesisgui.metric
 
-import com.amazonaws.services.cloudwatch.model.MetricDataResult
-import java.sql.Timestamp
+import software.amazon.awssdk.services.cloudwatch.model.MetricDataResult
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 class MetricDataSet {
     val putRecordsTotal = mutableListOf<Pair<LocalDateTime, Double>>()
@@ -20,12 +20,12 @@ class MetricDataSet {
 
     fun addAll(metricDataResults: List<MetricDataResult>) {
         metricDataResults.forEach { result ->
-            val timeToValue = result.timestamps.zip(result.values)
+            val timeToValue = result.timestamps().zip(result.values())
 
             timeToValue.forEach { (date, value) ->
-                val localDateTime = Timestamp(date.time).toLocalDateTime()
+                val localDateTime = LocalDateTime.ofInstant(date, ZoneId.systemDefault())
 
-                when (result.label) {
+                when (result.label()) {
                     "PutRecords.TotalRecords" -> putRecordsTotal.add(Pair(localDateTime, value))
                     "PutRecords.Bytes" -> putRecordsByte.add(Pair(localDateTime, value))
                     "PutRecords.Latency" -> putRecordLatency.add(Pair(localDateTime, value))

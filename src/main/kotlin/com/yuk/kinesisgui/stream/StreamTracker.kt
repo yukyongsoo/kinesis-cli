@@ -1,6 +1,5 @@
 package com.yuk.kinesisgui.stream
 
-import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.yuk.kinesisgui.Config
 import kotlinx.coroutines.CoroutineScope
@@ -10,6 +9,10 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse
+import software.amazon.kinesis.retrieval.AggregatorUtil
+import software.amazon.kinesis.retrieval.KinesisClientRecord
+import java.nio.charset.StandardCharsets
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
@@ -141,23 +144,23 @@ class StreamTracker(
                         delay(1000)
 
                         val result = kinesisService.getRecords(iterator, 1000)
-                        val deaggregationRecords = UserRecord.deaggregate(result.records)
+                        val deaggregationRecords = deaggregateRecord(result)
 
                         val records =
                             deaggregationRecords.mapNotNullTo(mutableSetOf()) { record ->
                                 try {
-                                    val raw = String(record.data.array())
+                                    val raw = StandardCharsets.UTF_8.decode(record.data()).toString()
                                     val values = Config.objectMapper.readValue<MutableMap<String, Any?>>(raw)
 
                                     RecordData(values).apply {
-                                        seq = "${record.sequenceNumber}:${record.subSequenceNumber}"
-                                        recordTime = record.approximateArrivalTimestamp.toString()
+                                        seq = "${record.sequenceNumber()}:${record.subSequenceNumber()}"
+                                        recordTime = record.approximateArrivalTimestamp().toString()
                                         this.shardId = this@ShardTracker.shardId
-                                        partitionKey = record.partitionKey
+                                        partitionKey = record.partitionKey()
                                         this.raw = raw
                                     }
                                 } catch (e: Exception) {
-                                    println("seq: ${record.sequenceNumber} message: ${e.message}")
+                                    println("seq: ${record.sequenceNumber()} message: ${e.message}")
                                     return@mapNotNullTo null
                                 }
                             }
@@ -170,13 +173,24 @@ class StreamTracker(
                             it.process(records, iterator)
                         }
 
-                        if (result.nextShardIterator == null) {
+                        if (result.nextShardIterator() == null) {
                             isRunning = false
                         } else {
-                            iterator = result.nextShardIterator
+                            iterator = result.nextShardIterator()
                         }
                     }
                 }
         }
+    }
+
+    private val aggregatorUtil = AggregatorUtil()
+
+    private fun deaggregateRecord(result: GetRecordsResponse): List<KinesisClientRecord> {
+        val records =
+            result.records().map {
+                KinesisClientRecord.fromRecord(it)
+            }
+
+        return aggregatorUtil.deaggregate(records)
     }
 }

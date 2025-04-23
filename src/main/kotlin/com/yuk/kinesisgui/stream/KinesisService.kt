@@ -1,36 +1,41 @@
 package com.yuk.kinesisgui.stream
 
-import com.amazonaws.services.kinesis.AmazonKinesis
-import com.amazonaws.services.kinesis.model.GetRecordsRequest
-import com.amazonaws.services.kinesis.model.GetRecordsResult
-import com.amazonaws.services.kinesis.model.GetShardIteratorRequest
-import com.amazonaws.services.kinesis.model.ListShardsRequest
-import com.amazonaws.services.kinesis.model.PutRecordRequest
 import org.springframework.stereotype.Service
-import java.nio.ByteBuffer
+import software.amazon.awssdk.core.SdkBytes
+import software.amazon.awssdk.services.kinesis.KinesisClient
+import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest
+import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse
+import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest
+import software.amazon.awssdk.services.kinesis.model.ListShardsRequest
+import software.amazon.awssdk.services.kinesis.model.PutRecordRequest
+import java.nio.charset.Charset
 import java.util.Date
 
 @Service
 class KinesisService(
-    private val kinesisClient: AmazonKinesis,
+    private val kinesisClient: KinesisClient,
 ) {
     fun getStreamList(word: String = ""): List<String> {
         val list = kinesisClient.listStreams()
 
+        list.streamNames()
+
         return if (word.isNotEmpty()) {
-            list.streamNames.filter { it.contains(word) }
+            list.streamNames().filter { it.contains(word) }
         } else {
-            list.streamNames
+            list.streamNames()
         }
     }
 
     fun getShardIds(streamName: String): List<String> {
-        val request = ListShardsRequest()
-        request.streamName = streamName
+        val request =
+            ListShardsRequest.builder()
+                .streamName(streamName)
+                .build()
 
         val response = kinesisClient.listShards(request)
 
-        return response.shards.map { it.shardId }
+        return response.shards().map { it.shardId() }
     }
 
     fun getShardIterator(
@@ -39,28 +44,33 @@ class KinesisService(
         shardIteratorType: String = "LATEST",
         startDate: Date = Date(),
     ): String {
-        val shardIteratorRequest = GetShardIteratorRequest()
-        shardIteratorRequest.streamName = streamName
-        shardIteratorRequest.shardId = shardId
-        shardIteratorRequest.shardIteratorType = shardIteratorType
+        val shardIteratorRequest =
+            GetShardIteratorRequest.builder()
+                .streamName(streamName)
+                .shardId(shardId)
+                .shardIteratorType(shardIteratorType)
 
         if (shardIteratorType == "AT_TIMESTAMP") {
-            shardIteratorRequest.timestamp = startDate
+            shardIteratorRequest
+                .timestamp(startDate.toInstant())
         }
 
         val shardIteratorResult =
-            kinesisClient.getShardIterator(shardIteratorRequest)
+            kinesisClient.getShardIterator(shardIteratorRequest.build())
 
-        return shardIteratorResult.shardIterator
+        return shardIteratorResult.shardIterator()
     }
 
     fun getRecords(
         shardIterator: String,
         limit: Int,
-    ): GetRecordsResult {
-        val getRecordsRequest = GetRecordsRequest()
-        getRecordsRequest.shardIterator = shardIterator
-        getRecordsRequest.limit = limit
+    ): GetRecordsResponse {
+        val getRecordsRequest =
+            GetRecordsRequest
+                .builder()
+                .shardIterator(shardIterator)
+                .limit(limit)
+                .build()
 
         return kinesisClient.getRecords(getRecordsRequest)
     }
@@ -69,15 +79,20 @@ class KinesisService(
         streamName: String,
         data: String,
     ): String {
-        val putRecordRequest = PutRecordRequest()
-        putRecordRequest.streamName = streamName
-        putRecordRequest.data =
-            ByteBuffer.wrap(
-                data.toByteArray(),
-            )
-        putRecordRequest.partitionKey = "0"
+        val putRecordRequest =
+            PutRecordRequest
+                .builder()
+                .streamName(streamName)
+                .data(
+                    SdkBytes.fromString(
+                        data,
+                        Charset.defaultCharset(),
+                    ),
+                )
+                .partitionKey("0")
+                .build()
 
         val putRecordResult = kinesisClient.putRecord(putRecordRequest)
-        return "${putRecordResult.shardId} : ${putRecordResult.sequenceNumber}"
+        return "${putRecordResult.shardId()} : ${putRecordResult.sequenceNumber()}"
     }
 }

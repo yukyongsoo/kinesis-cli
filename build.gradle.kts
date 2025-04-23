@@ -1,8 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.4.0"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("com.vaadin") version "24.5.8"
     kotlin("jvm") version "2.0.0"
@@ -10,7 +11,7 @@ plugins {
 }
 
 group = "com.yuk"
-version = "0.3.5-SNAPSHOT"
+version = "0.3.6-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -43,9 +44,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-    implementation(platform("com.amazonaws:aws-java-sdk-bom:1.12.779"))
-    implementation("com.amazonaws:aws-java-sdk-kinesis")
-    implementation("com.amazonaws:amazon-kinesis-client:1.15.2")
+    implementation(platform("software.amazon.awssdk:bom:2.29.24"))
+    implementation("software.amazon.awssdk:kinesis")
+    implementation("software.amazon.kinesis:amazon-kinesis-client:3.0.2")
 }
 
 dependencyManagement {
@@ -55,9 +56,9 @@ dependencyManagement {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xjsr305=strict"))
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
