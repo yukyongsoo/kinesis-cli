@@ -1,21 +1,21 @@
 package com.yuk.kinesisgui.metric
 
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch
-import com.amazonaws.services.cloudwatch.model.DimensionFilter
-import com.amazonaws.services.cloudwatch.model.GetMetricDataRequest
-import com.amazonaws.services.cloudwatch.model.ListMetricsRequest
-import com.amazonaws.services.cloudwatch.model.Metric
-import com.amazonaws.services.cloudwatch.model.MetricDataQuery
-import com.amazonaws.services.cloudwatch.model.MetricDataResult
-import com.amazonaws.services.cloudwatch.model.MetricStat
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.model.DimensionFilter
+import software.amazon.awssdk.services.cloudwatch.model.GetMetricDataRequest
+import software.amazon.awssdk.services.cloudwatch.model.ListMetricsRequest
+import software.amazon.awssdk.services.cloudwatch.model.Metric
+import software.amazon.awssdk.services.cloudwatch.model.MetricDataQuery
+import software.amazon.awssdk.services.cloudwatch.model.MetricDataResult
+import software.amazon.awssdk.services.cloudwatch.model.MetricStat
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
 class MonitoringService(
-    private val client: AmazonCloudWatch,
+    private val client: CloudWatchClient,
 ) {
     fun getStreamMetricList(streamName: String): List<Metric> {
         var nextToken: String? = null
@@ -24,15 +24,22 @@ class MonitoringService(
             buildList<Metric> {
                 do {
                     val listMetricsRequest =
-                        ListMetricsRequest().withNamespace("AWS/Kinesis")
-                            .withDimensions(DimensionFilter().withName("StreamName").withValue(streamName))
-                            .withNextToken(nextToken)
+                        ListMetricsRequest.builder()
+                            .namespace("AWS/Kinesis")
+                            .dimensions(
+                                DimensionFilter.builder()
+                                    .name("StreamName")
+                                    .value(streamName)
+                                    .build(),
+                            )
+                            .nextToken(nextToken)
+                            .build()
 
                     val listMetricsResult = client.listMetrics(listMetricsRequest)
 
-                    addAll(listMetricsResult.metrics)
+                    addAll(listMetricsResult.metrics())
 
-                    nextToken = listMetricsResult.nextToken
+                    nextToken = listMetricsResult.nextToken()
                 } while (nextToken?.isNotBlank() == true)
             }
 
@@ -52,18 +59,25 @@ class MonitoringService(
         val endTimeInstant = Timestamp.valueOf(currentDatetime)
 
         val request =
-            GetMetricDataRequest()
-                .withMetricDataQueries(query)
-                .withStartTime(startTimeInstant)
-                .withEndTime(endTimeInstant)
+            GetMetricDataRequest
+                .builder()
+                .metricDataQueries(query)
+                .startTime(startTimeInstant.toInstant())
+                .endTime(endTimeInstant.toInstant())
+                .build()
 
         val response = client.getMetricData(request)
 
-        return response.metricDataResults
+        return response.metricDataResults()
     }
 
     private fun makeMetricStat(metric: Metric): MetricStat {
-        val metricStat = MetricStat().withMetric(metric).withPeriod(120).withStat("Sum")
+        val metricStat =
+            MetricStat.builder()
+                .metric(metric)
+                .period(120)
+                .stat("Sum")
+                .build()
 
         return metricStat
     }
@@ -71,7 +85,11 @@ class MonitoringService(
     private fun makeMetricDataQuery(metricStat: MetricStat): MetricDataQuery {
         val id = "a${UUID.randomUUID().toString().replace("-", "_")}"
 
-        val query = MetricDataQuery().withMetricStat(metricStat).withId(id)
+        val query =
+            MetricDataQuery.builder()
+                .metricStat(metricStat)
+                .id(id)
+                .build()
 
         return query
     }
